@@ -1,6 +1,6 @@
 # CodeCombat Node Library
 
-[![npm shield](https://img.shields.io/npm/v/@fern-api/{company})](https://www.npmjs.com/package/@fern-api/codecombat)
+[![npm shield](https://img.shields.io/npm/v/@fern-api/codecombat)](https://www.npmjs.com/package/@fern-api/codecombat)
 
 The CodeCombat Node.js library provides access to the CodeCombat API from JavaScript/TypeScript.
 
