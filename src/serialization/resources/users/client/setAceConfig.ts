@@ -8,7 +8,7 @@ import * as core from "../../../../core";
 
 export const Request: core.serialization.Schema<
     serializers.users.setAceConfig.Request.Raw,
-    Omit<CodecombatApi.SetAceConfigRequest, "handle">
+    CodecombatApi.SetAceConfigRequest
 > = core.serialization.object({
     liveCompletion: core.serialization.boolean().optional(),
     behaviors: core.serialization.boolean().optional(),

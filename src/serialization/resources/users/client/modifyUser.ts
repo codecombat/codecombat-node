@@ -8,7 +8,7 @@ import * as core from "../../../../core";
 
 export const Request: core.serialization.Schema<
     serializers.users.modifyUser.Request.Raw,
-    Omit<CodecombatApi.ModifyUserRequest, "handle">
+    CodecombatApi.ModifyUserRequest
 > = core.serialization.object({
     name: core.serialization.string(),
     birthday: core.serialization.string().optional(),

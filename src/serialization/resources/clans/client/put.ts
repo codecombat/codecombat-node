@@ -6,12 +6,10 @@ import * as serializers from "../../..";
 import { CodecombatApi } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
-export const Request: core.serialization.Schema<
-    serializers.clans.put.Request.Raw,
-    Omit<CodecombatApi.ClanRequest, "handle">
-> = core.serialization.object({
-    userId: core.serialization.string(),
-});
+export const Request: core.serialization.Schema<serializers.clans.put.Request.Raw, CodecombatApi.ClanRequest> =
+    core.serialization.object({
+        userId: core.serialization.string(),
+    });
 
 export declare namespace Request {
     interface Raw {

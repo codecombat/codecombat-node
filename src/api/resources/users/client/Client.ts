@@ -67,9 +67,7 @@ export class Client {
     /**
      * Returns a `User`.
      */
-    public async get(handle: string, request: CodecombatApi.GetUserRequest): Promise<CodecombatApi.UserResponse> {
-        const _queryParams = new URLSearchParams();
-        _queryParams.append("handle", request.handle);
+    public async get(handle: string): Promise<CodecombatApi.UserResponse> {
         const _response = await core.fetcher({
             url: urlJoin(
                 this.options.environment ?? environments.CodecombatApiEnvironment.Production,
@@ -79,7 +77,6 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            queryParameters: _queryParams,
         });
         if (_response.ok) {
             return await serializers.users.get.Response.parse(_response.body as serializers.users.get.Response.Raw);
@@ -114,8 +111,6 @@ export class Client {
         handle: string,
         request: CodecombatApi.ModifyUserRequest
     ): Promise<CodecombatApi.UserResponse> {
-        const _queryParams = new URLSearchParams();
-        _queryParams.append("handle", request.handle);
         const _response = await core.fetcher({
             url: urlJoin(
                 this.options.environment ?? environments.CodecombatApiEnvironment.Production,
@@ -125,7 +120,6 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            queryParameters: _queryParams,
             body: await serializers.users.modifyUser.Request.json({
                 name: request.name,
                 birthday: request.birthday,
@@ -162,12 +156,7 @@ export class Client {
     /**
      * Returns a list of `Classrooms` this user is in (if a student) or owns (if a teacher).
      */
-    public async getClassrooms(
-        handle: string,
-        request: CodecombatApi.GetUserClassroomsRequest
-    ): Promise<CodecombatApi.ClassroomResponseWithCode[]> {
-        const _queryParams = new URLSearchParams();
-        _queryParams.append("handle", request.handle);
+    public async getClassrooms(handle: string): Promise<CodecombatApi.ClassroomResponseWithCode[]> {
         const _response = await core.fetcher({
             url: urlJoin(
                 this.options.environment ?? environments.CodecombatApiEnvironment.Production,
@@ -177,7 +166,6 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            queryParameters: _queryParams,
         });
         if (_response.ok) {
             return await serializers.users.getClassrooms.Response.parse(
@@ -210,9 +198,7 @@ export class Client {
     /**
      * Set the user's hero.
      */
-    public async setHero(handle: string, request: CodecombatApi.SetHeroRequest): Promise<CodecombatApi.UserResponse> {
-        const _queryParams = new URLSearchParams();
-        _queryParams.append("handle", request.handle);
+    public async setHero(handle: string, request?: CodecombatApi.SetHeroRequest): Promise<CodecombatApi.UserResponse> {
         const _response = await core.fetcher({
             url: urlJoin(
                 this.options.environment ?? environments.CodecombatApiEnvironment.Production,
@@ -222,9 +208,8 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            queryParameters: _queryParams,
             body: await serializers.users.setHero.Request.json({
-                thangType: request.thangType,
+                thangType: request?.thangType,
             }),
         });
         if (_response.ok) {
@@ -260,10 +245,8 @@ export class Client {
      */
     public async setAceConfig(
         handle: string,
-        request: CodecombatApi.SetAceConfigRequest
+        request?: CodecombatApi.SetAceConfigRequest
     ): Promise<CodecombatApi.UserResponse> {
-        const _queryParams = new URLSearchParams();
-        _queryParams.append("handle", request.handle);
         const _response = await core.fetcher({
             url: urlJoin(
                 this.options.environment ?? environments.CodecombatApiEnvironment.Production,
@@ -273,11 +256,10 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            queryParameters: _queryParams,
             body: await serializers.users.setAceConfig.Request.json({
-                liveCompletion: request.liveCompletion,
-                behaviors: request.behaviors,
-                language: request.language,
+                liveCompletion: request?.liveCompletion,
+                behaviors: request?.behaviors,
+                language: request?.language,
             }),
         });
         if (_response.ok) {
@@ -319,8 +301,6 @@ export class Client {
         handle: string,
         request: CodecombatApi.AddOauth2IdentityRequest
     ): Promise<CodecombatApi.UserResponse> {
-        const _queryParams = new URLSearchParams();
-        _queryParams.append("handle", request.handle);
         const _response = await core.fetcher({
             url: urlJoin(
                 this.options.environment ?? environments.CodecombatApiEnvironment.Production,
@@ -330,7 +310,6 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            queryParameters: _queryParams,
             body: await serializers.users.addOauth2Identity.Request.json({
                 provider: request.provider,
                 accessToken: request.accessToken,
@@ -371,10 +350,8 @@ export class Client {
      */
     public async grantPremiumAccess(
         handle: string,
-        request: CodecombatApi.GrantUserPremiumAccessRequest
+        request: CodecombatApi.Subscription
     ): Promise<CodecombatApi.UserResponse> {
-        const _queryParams = new URLSearchParams();
-        _queryParams.append("handle", request.handle);
         const _response = await core.fetcher({
             url: urlJoin(
                 this.options.environment ?? environments.CodecombatApiEnvironment.Production,
@@ -384,8 +361,7 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            queryParameters: _queryParams,
-            body: await serializers.users.grantPremiumAccess.Request.json(request.body),
+            body: await serializers.users.grantPremiumAccess.Request.json(request),
         });
         if (_response.ok) {
             return await serializers.users.grantPremiumAccess.Response.parse(
@@ -422,10 +398,8 @@ export class Client {
      */
     public async shortenSubscription(
         handle: string,
-        request: CodecombatApi.ShortenSubscriptionRequest
+        request: CodecombatApi.Subscription
     ): Promise<CodecombatApi.UserResponse> {
-        const _queryParams = new URLSearchParams();
-        _queryParams.append("handle", request.handle);
         const _response = await core.fetcher({
             url: urlJoin(
                 this.options.environment ?? environments.CodecombatApiEnvironment.Production,
@@ -435,8 +409,7 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            queryParameters: _queryParams,
-            body: await serializers.users.shortenSubscription.Request.json(request.body),
+            body: await serializers.users.shortenSubscription.Request.json(request),
         });
         if (_response.ok) {
             return await serializers.users.shortenSubscription.Response.parse(
@@ -473,10 +446,8 @@ export class Client {
      */
     public async grantClassroomAccess(
         handle: string,
-        request: CodecombatApi.GrantUserClassroomAccessRequest
+        request: CodecombatApi.Subscription
     ): Promise<CodecombatApi.UserResponse> {
-        const _queryParams = new URLSearchParams();
-        _queryParams.append("handle", request.handle);
         const _response = await core.fetcher({
             url: urlJoin(
                 this.options.environment ?? environments.CodecombatApiEnvironment.Production,
@@ -486,8 +457,7 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            queryParameters: _queryParams,
-            body: await serializers.users.grantClassroomAccess.Request.json(request.body),
+            body: await serializers.users.grantClassroomAccess.Request.json(request),
         });
         if (_response.ok) {
             return await serializers.users.grantClassroomAccess.Response.parse(
@@ -524,10 +494,8 @@ export class Client {
      */
     public async shortenLicense(
         handle: string,
-        request: CodecombatApi.ShortenLicenseRequest
+        request: CodecombatApi.Subscription
     ): Promise<CodecombatApi.UserResponse> {
-        const _queryParams = new URLSearchParams();
-        _queryParams.append("handle", request.handle);
         const _response = await core.fetcher({
             url: urlJoin(
                 this.options.environment ?? environments.CodecombatApiEnvironment.Production,
@@ -537,8 +505,7 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            queryParameters: _queryParams,
-            body: await serializers.users.shortenLicense.Request.json(request.body),
+            body: await serializers.users.shortenLicense.Request.json(request),
         });
         if (_response.ok) {
             return await serializers.users.shortenLicense.Response.parse(

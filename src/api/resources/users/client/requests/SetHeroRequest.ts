@@ -5,9 +5,5 @@
 import { CodecombatApi } from "@fern-api/codecombat";
 
 export interface SetHeroRequest {
-    /**
-     * The document's `_id` or `slug`.
-     */
-    handle: string;
     thangType?: CodecombatApi.ObjectId;
 }

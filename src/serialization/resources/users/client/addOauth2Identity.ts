@@ -8,7 +8,7 @@ import * as core from "../../../../core";
 
 export const Request: core.serialization.Schema<
     serializers.users.addOauth2Identity.Request.Raw,
-    Omit<CodecombatApi.AddOauth2IdentityRequest, "handle">
+    CodecombatApi.AddOauth2IdentityRequest
 > = core.serialization.object({
     provider: core.serialization.string(),
     accessToken: core.serialization.string().optional(),

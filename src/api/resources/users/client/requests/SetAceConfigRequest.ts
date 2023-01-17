@@ -3,10 +3,6 @@
  */
 
 export interface SetAceConfigRequest {
-    /**
-     * The document's `_id` or `slug`.
-     */
-    handle: string;
     liveCompletion?: boolean;
     behaviors?: boolean;
     language?: string;

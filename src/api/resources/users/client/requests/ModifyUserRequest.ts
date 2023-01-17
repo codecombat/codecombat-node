@@ -3,10 +3,6 @@
  */
 
 export interface ModifyUserRequest {
-    /**
-     * The document's `_id` or `slug`.
-     */
-    handle: string;
     name: string;
     birthday?: string;
 }

@@ -23,8 +23,6 @@ export class Client {
      * Upserts a user into the clan.
      */
     public async put(handle: string, request: CodecombatApi.ClanRequest): Promise<CodecombatApi.ClanResponse> {
-        const _queryParams = new URLSearchParams();
-        _queryParams.append("handle", request.handle);
         const _response = await core.fetcher({
             url: urlJoin(
                 this.options.environment ?? environments.CodecombatApiEnvironment.Production,
@@ -34,7 +32,6 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            queryParameters: _queryParams,
             body: await serializers.clans.put.Request.json({
                 userId: request.userId,
             }),

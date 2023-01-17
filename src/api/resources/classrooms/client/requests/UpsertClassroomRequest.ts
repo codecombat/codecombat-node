@@ -3,10 +3,6 @@
  */
 
 export interface UpsertClassroomRequest {
-    /**
-     * The document's `_id` or `slug`.
-     */
-    handle: string;
     code: string;
     userId: string;
     retMemberLimit?: number;

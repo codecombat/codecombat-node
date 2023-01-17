@@ -1,3 +1,4 @@
+export { GetClassroomRequest } from "./GetClassroomRequest";
 export { CreateClassroomRequest } from "./CreateClassroomRequest";
 export { UpsertClassroomRequest } from "./UpsertClassroomRequest";
 export { RemoveUserRequest } from "./RemoveUserRequest";

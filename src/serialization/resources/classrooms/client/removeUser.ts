@@ -8,7 +8,7 @@ import * as core from "../../../../core";
 
 export const Request: core.serialization.Schema<
     serializers.classrooms.removeUser.Request.Raw,
-    Omit<CodecombatApi.RemoveUserRequest, "handle">
+    CodecombatApi.RemoveUserRequest
 > = core.serialization.object({
     userId: core.serialization.string(),
     retMemberLimit: core.serialization.number().optional(),

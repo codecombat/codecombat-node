@@ -3,9 +3,5 @@
  */
 
 export interface ClanRequest {
-    /**
-     * The document's `_id` or `slug`.
-     */
-    handle: string;
     userId: string;
 }

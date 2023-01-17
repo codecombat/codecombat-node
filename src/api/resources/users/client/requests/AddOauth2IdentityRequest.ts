@@ -3,10 +3,6 @@
  */
 
 export interface AddOauth2IdentityRequest {
-    /**
-     * The document's `_id` or `slug`.
-     */
-    handle: string;
     provider: string;
     accessToken?: string;
     code?: string;

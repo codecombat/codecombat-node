@@ -3,10 +3,6 @@
  */
 
 export interface RemoveUserRequest {
-    /**
-     * The document's `_id` or `slug`.
-     */
-    handle: string;
     userId: string;
     retMemberLimit?: number;
 }

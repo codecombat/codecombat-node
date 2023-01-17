@@ -22,13 +22,17 @@ export class Client {
     /**
      * Returns the classroom details for a class code.
      */
-    public async get(): Promise<CodecombatApi.ClassroomResponseWithCode> {
+    public async get(request: CodecombatApi.GetClassroomRequest): Promise<CodecombatApi.ClassroomResponseWithCode> {
+        const _queryParams = new URLSearchParams();
+        _queryParams.append("code", request.code);
+        _queryParams.append("retMemberLimit", request.retMemberLimit.toString());
         const _response = await core.fetcher({
             url: urlJoin(this.options.environment ?? environments.CodecombatApiEnvironment.Production, "/classrooms"),
             method: "GET",
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
+            queryParameters: _queryParams,
         });
         if (_response.ok) {
             return await serializers.classrooms.get.Response.parse(
@@ -107,8 +111,6 @@ export class Client {
         handle: string,
         request: CodecombatApi.UpsertClassroomRequest
     ): Promise<CodecombatApi.ClassroomResponse> {
-        const _queryParams = new URLSearchParams();
-        _queryParams.append("handle", request.handle);
         const _response = await core.fetcher({
             url: urlJoin(
                 this.options.environment ?? environments.CodecombatApiEnvironment.Production,
@@ -118,7 +120,6 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            queryParameters: _queryParams,
             body: await serializers.classrooms.upsert.Request.json({
                 code: request.code,
                 userId: request.userId,
@@ -160,8 +161,6 @@ export class Client {
         handle: string,
         request: CodecombatApi.RemoveUserRequest
     ): Promise<CodecombatApi.ClassroomResponse> {
-        const _queryParams = new URLSearchParams();
-        _queryParams.append("handle", request.handle);
         const _response = await core.fetcher({
             url: urlJoin(
                 this.options.environment ?? environments.CodecombatApiEnvironment.Production,
@@ -171,7 +170,6 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            queryParameters: _queryParams,
             body: await serializers.classrooms.removeUser.Request.json({
                 userId: request.userId,
                 retMemberLimit: request.retMemberLimit,
