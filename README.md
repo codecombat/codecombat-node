@@ -6,7 +6,7 @@ The CodeCombat Node.js library provides access to the CodeCombat API from JavaSc
 
 ## Documentation
 
-API documentation is available at <{docs_url}>.
+API documentation is available at https://codecombat.com/api-docs.
 
 ## Usage
 
