@@ -13,9 +13,9 @@ API documentation is available at https://codecombat.com/api-docs.
 [![Try it out](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/edit/typescript-example-using-sdk-built-with-fern-zrfb4p?file=app.ts)
 
 ```typescript
-import { CodecombatApiClient } from '@fern-api/codecombat';
+import { CodeCombatApiClient } from '@fern-api/code-combat';
 
-const client = new CodecombatApiClient({
+const client = new CodeCombatApiClient({
   credentials: {
     username: 'MY_USERNAME',
     password: 'MY_PASSWORD',
