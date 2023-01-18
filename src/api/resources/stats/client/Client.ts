@@ -22,7 +22,22 @@ export class Client {
     /**
      * Returns the playtime stats
      */
-    public async getPlaytimeStats(): Promise<CodecombatApi.PlaytimeStatsResponse> {
+    public async getPlaytimeStats(
+        request?: CodecombatApi.GetPlaytimeStatsRequest
+    ): Promise<CodecombatApi.PlaytimeStatsResponse> {
+        const _queryParams = new URLSearchParams();
+        if (request?.startDate != null) {
+            _queryParams.append("startDate", request?.startDate);
+        }
+
+        if (request?.endDate != null) {
+            _queryParams.append("endDate", request?.endDate);
+        }
+
+        if (request?.country != null) {
+            _queryParams.append("country", request?.country);
+        }
+
         const _response = await core.fetcher({
             url: urlJoin(
                 this.options.environment ?? environments.CodecombatApiEnvironment.Production,
@@ -32,6 +47,7 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
+            queryParameters: _queryParams,
         });
         if (_response.ok) {
             return await serializers.stats.getPlaytimeStats.Response.parse(

@@ -4,7 +4,17 @@
 
 export interface ClassroomStatsRequest {
     /**
-     * The classroom's `_id`.
+     * If specified, include only the specified projection of returned stats; else, return all stats. Format as a comma-separated list, like `creator,playtime,state.complete`.
+     *
      */
-    classroomHandle: string;
+    project?: string;
+    /**
+     * Limit the return member number. the default value is 10, and the max value is 100
+     */
+    memberLimit?: number;
+    /**
+     * Skip the members that doesn't need to return, for pagination
+     *
+     */
+    memberSkip?: number;
 }

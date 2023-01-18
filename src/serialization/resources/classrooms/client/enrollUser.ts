@@ -8,7 +8,7 @@ import * as core from "../../../../core";
 
 export const Request: core.serialization.Schema<
     serializers.classrooms.enrollUser.Request.Raw,
-    Omit<CodecombatApi.EnrollUserRequest, "classroomHandle" | "courseHandle">
+    Omit<CodecombatApi.EnrollUserRequest, "retMemberLimit">
 > = core.serialization.object({
     userId: core.serialization.lazy(async () => (await import("../../..")).ObjectId),
 });

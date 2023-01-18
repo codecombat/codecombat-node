@@ -67,7 +67,12 @@ export class Client {
     /**
      * Returns a `User`.
      */
-    public async get(handle: string): Promise<CodecombatApi.UserResponse> {
+    public async get(handle: string, request?: CodecombatApi.GetUserRequest): Promise<CodecombatApi.UserResponse> {
+        const _queryParams = new URLSearchParams();
+        if (request?.includePlayTime != null) {
+            _queryParams.append("includePlayTime", request?.includePlayTime);
+        }
+
         const _response = await core.fetcher({
             url: urlJoin(
                 this.options.environment ?? environments.CodecombatApiEnvironment.Production,
@@ -77,6 +82,7 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
+            queryParameters: _queryParams,
         });
         if (_response.ok) {
             return await serializers.users.get.Response.parse(_response.body as serializers.users.get.Response.Raw);
@@ -156,7 +162,15 @@ export class Client {
     /**
      * Returns a list of `Classrooms` this user is in (if a student) or owns (if a teacher).
      */
-    public async getClassrooms(handle: string): Promise<CodecombatApi.ClassroomResponseWithCode[]> {
+    public async getClassrooms(
+        handle: string,
+        request?: CodecombatApi.GetUserClassroomsRequest
+    ): Promise<CodecombatApi.ClassroomResponseWithCode[]> {
+        const _queryParams = new URLSearchParams();
+        if (request?.retMemberLimit != null) {
+            _queryParams.append("retMemberLimit", request?.retMemberLimit.toString());
+        }
+
         const _response = await core.fetcher({
             url: urlJoin(
                 this.options.environment ?? environments.CodecombatApiEnvironment.Production,
@@ -166,6 +180,7 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
+            queryParameters: _queryParams,
         });
         if (_response.ok) {
             return await serializers.users.getClassrooms.Response.parse(
@@ -538,10 +553,7 @@ export class Client {
     /**
      * Redirects to `/{handle}` given a unique, identifying property
      */
-    public async lookup(property: string, value: string, request: CodecombatApi.LookupUserRequest): Promise<void> {
-        const _queryParams = new URLSearchParams();
-        _queryParams.append("property", request.property);
-        _queryParams.append("value", request.value);
+    public async lookup(property: string, value: string): Promise<void> {
         const _response = await core.fetcher({
             url: urlJoin(
                 this.options.environment ?? environments.CodecombatApiEnvironment.Production,
@@ -551,7 +563,6 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            queryParameters: _queryParams,
         });
         if (_response.ok) {
             return;

@@ -6,12 +6,8 @@ import { CodecombatApi } from "@fern-api/codecombat";
 
 export interface EnrollUserRequest {
     /**
-     * The classroom's `_id`.
+     * limit the return number of members for the classroom, the default value is 1000
      */
-    classroomHandle: string;
-    /**
-     * The course's `_id`.
-     */
-    courseHandle: string;
+    retMemberLimit?: number;
     userId: CodecombatApi.ObjectId;
 }

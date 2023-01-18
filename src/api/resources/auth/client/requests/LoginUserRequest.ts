@@ -8,11 +8,11 @@ export interface LoginUserRequest {
      */
     provider: string;
     /**
-     * Will be passed through your lookup URL to get the user ID. Required if no code.
+     * Will be passed through your lookup URL to get the user ID. Required if no `code`.
      */
     accessToken?: string;
     /**
-     * Will be passed to the OAuth token endpoint to get a token. Required if no accessToken.
+     * Will be passed to the OAuth token endpoint to get a token. Required if no `accessToken`.
      */
     code?: string;
     /**
@@ -20,8 +20,7 @@ export interface LoginUserRequest {
      */
     redirect?: string;
     /**
-     * If an error happens, redirects the user to this url, with at least query parameters code, errorName and message.
-     *
+     * If an error happens, redirects the user to this url, with at least query parameters `code`, `errorName` and `message`.
      */
     errorRedirect?: string;
 }

@@ -4,11 +4,11 @@
 
 export interface GetClassroomRequest {
     /**
-     * The classroom’s `code`
+     * The classroom's `code`.
      */
     code: string;
     /**
      * limit the return number of members for the classroom
      */
-    retMemberLimit: number;
+    retMemberLimit?: number;
 }

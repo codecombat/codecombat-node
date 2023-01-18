@@ -25,7 +25,10 @@ export class Client {
     public async get(request: CodecombatApi.GetClassroomRequest): Promise<CodecombatApi.ClassroomResponseWithCode> {
         const _queryParams = new URLSearchParams();
         _queryParams.append("code", request.code);
-        _queryParams.append("retMemberLimit", request.retMemberLimit.toString());
+        if (request.retMemberLimit != null) {
+            _queryParams.append("retMemberLimit", request.retMemberLimit.toString());
+        }
+
         const _response = await core.fetcher({
             url: urlJoin(this.options.environment ?? environments.CodecombatApiEnvironment.Production, "/classrooms"),
             method: "GET",
@@ -215,8 +218,10 @@ export class Client {
         request: CodecombatApi.EnrollUserRequest
     ): Promise<CodecombatApi.ClassroomResponse> {
         const _queryParams = new URLSearchParams();
-        _queryParams.append("classroomHandle", request.classroomHandle);
-        _queryParams.append("courseHandle", request.courseHandle);
+        if (request.retMemberLimit != null) {
+            _queryParams.append("retMemberLimit", request.retMemberLimit.toString());
+        }
+
         const _response = await core.fetcher({
             url: urlJoin(
                 this.options.environment ?? environments.CodecombatApiEnvironment.Production,
@@ -269,8 +274,10 @@ export class Client {
         request: CodecombatApi.UnenrollUserRequest
     ): Promise<CodecombatApi.ClassroomResponse> {
         const _queryParams = new URLSearchParams();
-        _queryParams.append("classroomHandle", request.classroomHandle);
-        _queryParams.append("courseHandle", request.courseHandle);
+        if (request.retMemberLimit != null) {
+            _queryParams.append("retMemberLimit", request.retMemberLimit.toString());
+        }
+
         const _response = await core.fetcher({
             url: urlJoin(
                 this.options.environment ?? environments.CodecombatApiEnvironment.Production,
@@ -319,10 +326,21 @@ export class Client {
      */
     public async getStats(
         classroomHandle: string,
-        request: CodecombatApi.ClassroomStatsRequest
+        request?: CodecombatApi.ClassroomStatsRequest
     ): Promise<CodecombatApi.ClassroomStats[]> {
         const _queryParams = new URLSearchParams();
-        _queryParams.append("classroomHandle", request.classroomHandle);
+        if (request?.project != null) {
+            _queryParams.append("project", request?.project);
+        }
+
+        if (request?.memberLimit != null) {
+            _queryParams.append("memberLimit", request?.memberLimit.toString());
+        }
+
+        if (request?.memberSkip != null) {
+            _queryParams.append("memberSkip", request?.memberSkip.toString());
+        }
+
         const _response = await core.fetcher({
             url: urlJoin(
                 this.options.environment ?? environments.CodecombatApiEnvironment.Production,
@@ -368,12 +386,8 @@ export class Client {
      */
     public async getLevelsPlayedForUser(
         classroomHandle: string,
-        memberHandle: string,
-        request: CodecombatApi.GetLevelsPlayedForUserRequest
+        memberHandle: string
     ): Promise<CodecombatApi.LevelSessionResponse[]> {
-        const _queryParams = new URLSearchParams();
-        _queryParams.append("classroomHandle", request.classroomHandle);
-        _queryParams.append("memberHandle", request.memberHandle);
         const _response = await core.fetcher({
             url: urlJoin(
                 this.options.environment ?? environments.CodecombatApiEnvironment.Production,
@@ -383,7 +397,6 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            queryParameters: _queryParams,
         });
         if (_response.ok) {
             return await serializers.classrooms.getLevelsPlayedForUser.Response.parse(

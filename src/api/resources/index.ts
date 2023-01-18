@@ -12,4 +12,5 @@ export * as auth from "./auth";
 export * from "./auth/client/requests";
 export * from "./clans/client/requests";
 export * from "./classrooms/client/requests";
+export * from "./stats/client/requests";
 export * from "./users/client/requests";
