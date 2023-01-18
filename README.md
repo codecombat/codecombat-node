@@ -10,12 +10,24 @@ API documentation is available at https://codecombat.com/api-docs.
 
 ## Usage
 
-[![Try it out](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](TODO)
+[![Try it out](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/edit/typescript-example-using-sdk-built-with-fern-zrfb4p?file=app.ts,tsconfig.json)
 
 ```typescript
-import { TODO } from "TODO";
+import { CodecombatApiClient } from '@fern-api/codecombat';
 
-const TODO
+const client = new CodecombatApiClient({
+  credentials: {
+    username: 'MY_USERNAME',
+    password: 'MY_PASSWORD',
+  },
+});
+
+const response = await client.users.setAceConfig('document_id', {
+  liveCompletion: true,
+  language: 'python',
+});
+
+console.log('Received response from Code Combat', response);
 ```
 
 ## Beta status
