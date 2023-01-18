@@ -10,7 +10,7 @@ API documentation is available at https://codecombat.com/api-docs.
 
 ## Usage
 
-[![Try it out](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/edit/typescript-example-using-sdk-built-with-fern-zrfb4p?file=app.ts,tsconfig.json)
+[![Try it out](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/edit/typescript-example-using-sdk-built-with-fern-zrfb4p?file=app.ts)
 
 ```typescript
 import { CodecombatApiClient } from '@fern-api/codecombat';
