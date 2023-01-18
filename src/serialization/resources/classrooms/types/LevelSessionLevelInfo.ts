@@ -3,12 +3,12 @@
  */
 
 import * as serializers from "../../..";
-import { CodecombatApi } from "@fern-api/codecombat";
+import { CodeCombatApi } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
 export const LevelSessionLevelInfo: core.serialization.ObjectSchema<
     serializers.LevelSessionLevelInfo.Raw,
-    CodecombatApi.LevelSessionLevelInfo
+    CodeCombatApi.LevelSessionLevelInfo
 > = core.serialization.object({
     original: core.serialization.string(),
 });

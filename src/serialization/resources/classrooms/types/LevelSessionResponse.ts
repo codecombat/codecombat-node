@@ -3,12 +3,12 @@
  */
 
 import * as serializers from "../../..";
-import { CodecombatApi } from "@fern-api/codecombat";
+import { CodeCombatApi } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
 export const LevelSessionResponse: core.serialization.ObjectSchema<
     serializers.LevelSessionResponse.Raw,
-    CodecombatApi.LevelSessionResponse
+    CodeCombatApi.LevelSessionResponse
 > = core.serialization.object({
     state: core.serialization.lazyObject(async () => (await import("../../..")).LevelSessionState),
     level: core.serialization.lazyObject(async () => (await import("../../..")).LevelSessionLevelInfo),

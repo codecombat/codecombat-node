@@ -3,12 +3,12 @@
  */
 
 import * as serializers from "../../..";
-import { CodecombatApi } from "@fern-api/codecombat";
+import { CodeCombatApi } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
 export const LicenseStatsResponse: core.serialization.ObjectSchema<
     serializers.LicenseStatsResponse.Raw,
-    CodecombatApi.LicenseStatsResponse
+    CodeCombatApi.LicenseStatsResponse
 > = core.serialization.object({
     licenseDaysGranted: core.serialization.number().optional(),
     licenseDaysUsed: core.serialization.number().optional(),

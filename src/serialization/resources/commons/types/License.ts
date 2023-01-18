@@ -3,10 +3,10 @@
  */
 
 import * as serializers from "../../..";
-import { CodecombatApi } from "@fern-api/codecombat";
+import { CodeCombatApi } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
-export const License: core.serialization.ObjectSchema<serializers.License.Raw, CodecombatApi.License> =
+export const License: core.serialization.ObjectSchema<serializers.License.Raw, CodeCombatApi.License> =
     core.serialization.object({
         ends: core.serialization.lazy(async () => (await import("../../..")).Datetime).optional(),
         active: core.serialization.boolean().optional(),

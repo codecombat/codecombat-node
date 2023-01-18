@@ -3,12 +3,12 @@
  */
 
 import * as serializers from "../../..";
-import { CodecombatApi } from "@fern-api/codecombat";
+import { CodeCombatApi } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
 export const Request: core.serialization.Schema<
     serializers.users.shortenLicense.Request.Raw,
-    CodecombatApi.Subscription
+    CodeCombatApi.Subscription
 > = core.serialization.lazyObject(async () => (await import("../../..")).Subscription);
 
 export declare namespace Request {
@@ -17,7 +17,7 @@ export declare namespace Request {
 
 export const Response: core.serialization.Schema<
     serializers.users.shortenLicense.Response.Raw,
-    CodecombatApi.UserResponse
+    CodeCombatApi.UserResponse
 > = core.serialization.lazyObject(async () => (await import("../../..")).UserResponse);
 
 export declare namespace Response {

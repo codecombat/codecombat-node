@@ -3,12 +3,12 @@
  */
 
 import * as serializers from "../../..";
-import { CodecombatApi } from "@fern-api/codecombat";
+import { CodeCombatApi } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
 export const OauthIdentity: core.serialization.ObjectSchema<
     serializers.OauthIdentity.Raw,
-    CodecombatApi.OauthIdentity
+    CodeCombatApi.OauthIdentity
 > = core.serialization.object({
     provider: core.serialization.string().optional(),
     id: core.serialization.string().optional(),

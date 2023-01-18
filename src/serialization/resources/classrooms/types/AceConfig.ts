@@ -3,10 +3,10 @@
  */
 
 import * as serializers from "../../..";
-import { CodecombatApi } from "@fern-api/codecombat";
+import { CodeCombatApi } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
-export const AceConfig: core.serialization.ObjectSchema<serializers.AceConfig.Raw, CodecombatApi.AceConfig> =
+export const AceConfig: core.serialization.ObjectSchema<serializers.AceConfig.Raw, CodeCombatApi.AceConfig> =
     core.serialization.object({
         language: core.serialization.string().optional(),
     });

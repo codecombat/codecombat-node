@@ -3,12 +3,12 @@
  */
 
 import * as serializers from "../../..";
-import { CodecombatApi } from "@fern-api/codecombat";
+import { CodeCombatApi } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
 export const Response: core.serialization.Schema<
     serializers.stats.getLicenseStats.Response.Raw,
-    CodecombatApi.LicenseStatsResponse
+    CodeCombatApi.LicenseStatsResponse
 > = core.serialization.lazyObject(async () => (await import("../../..")).LicenseStatsResponse);
 
 export declare namespace Response {

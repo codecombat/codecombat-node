@@ -3,12 +3,12 @@
  */
 
 import * as serializers from "../../..";
-import { CodecombatApi } from "@fern-api/codecombat";
+import { CodeCombatApi } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
 export const LevelSessionState: core.serialization.ObjectSchema<
     serializers.LevelSessionState.Raw,
-    CodecombatApi.LevelSessionState
+    CodeCombatApi.LevelSessionState
 > = core.serialization.object({
     complete: core.serialization.boolean(),
 });

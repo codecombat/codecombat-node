@@ -4,14 +4,14 @@
 
 import * as environments from "../../../../environments";
 import * as core from "../../../../core";
-import { CodecombatApi } from "@fern-api/codecombat";
+import { CodeCombatApi } from "@fern-api/codecombat";
 import urlJoin from "url-join";
 import * as serializers from "../../../../serialization";
 import * as errors from "../../../../errors";
 
 export declare namespace Client {
     interface Options {
-        environment?: environments.CodecombatApiEnvironment | string;
+        environment?: environments.CodeCombatApiEnvironment | string;
         credentials?: core.Supplier<core.BasicAuth>;
     }
 }
@@ -22,9 +22,9 @@ export class Client {
     /**
      * Creates a `User`.
      */
-    public async create(request: CodecombatApi.CreateUserRequest): Promise<void> {
+    public async create(request: CodeCombatApi.CreateUserRequest): Promise<void> {
         const _response = await core.fetcher({
-            url: urlJoin(this.options.environment ?? environments.CodecombatApiEnvironment.Production, "/users"),
+            url: urlJoin(this.options.environment ?? environments.CodeCombatApiEnvironment.Production, "/users"),
             method: "POST",
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
@@ -43,7 +43,7 @@ export class Client {
         }
 
         if (_response.error.reason === "status-code") {
-            throw new errors.CodecombatApiError({
+            throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
                 responseBody: _response.error.rawBody,
             });
@@ -51,14 +51,14 @@ export class Client {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.CodecombatApiError({
+                throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
                     responseBody: _response.error.rawBody,
                 });
             case "timeout":
-                throw new errors.CodecombatApiTimeoutError();
+                throw new errors.CodeCombatApiTimeoutError();
             case "unknown":
-                throw new errors.CodecombatApiError({
+                throw new errors.CodeCombatApiError({
                     message: _response.error.errorMessage,
                 });
         }
@@ -67,7 +67,7 @@ export class Client {
     /**
      * Returns a `User`.
      */
-    public async get(handle: string, request?: CodecombatApi.GetUserRequest): Promise<CodecombatApi.UserResponse> {
+    public async get(handle: string, request?: CodeCombatApi.GetUserRequest): Promise<CodeCombatApi.UserResponse> {
         const _queryParams = new URLSearchParams();
         if (request?.includePlayTime != null) {
             _queryParams.append("includePlayTime", request?.includePlayTime);
@@ -75,7 +75,7 @@ export class Client {
 
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodecombatApiEnvironment.Production,
+                this.options.environment ?? environments.CodeCombatApiEnvironment.Production,
                 `/users/${handle}`
             ),
             method: "GET",
@@ -89,7 +89,7 @@ export class Client {
         }
 
         if (_response.error.reason === "status-code") {
-            throw new errors.CodecombatApiError({
+            throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
                 responseBody: _response.error.rawBody,
             });
@@ -97,14 +97,14 @@ export class Client {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.CodecombatApiError({
+                throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
                     responseBody: _response.error.rawBody,
                 });
             case "timeout":
-                throw new errors.CodecombatApiTimeoutError();
+                throw new errors.CodeCombatApiTimeoutError();
             case "unknown":
-                throw new errors.CodecombatApiError({
+                throw new errors.CodeCombatApiError({
                     message: _response.error.errorMessage,
                 });
         }
@@ -115,11 +115,11 @@ export class Client {
      */
     public async modifyUser(
         handle: string,
-        request: CodecombatApi.ModifyUserRequest
-    ): Promise<CodecombatApi.UserResponse> {
+        request: CodeCombatApi.ModifyUserRequest
+    ): Promise<CodeCombatApi.UserResponse> {
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodecombatApiEnvironment.Production,
+                this.options.environment ?? environments.CodeCombatApiEnvironment.Production,
                 `/users/${handle}`
             ),
             method: "PUT",
@@ -138,7 +138,7 @@ export class Client {
         }
 
         if (_response.error.reason === "status-code") {
-            throw new errors.CodecombatApiError({
+            throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
                 responseBody: _response.error.rawBody,
             });
@@ -146,14 +146,14 @@ export class Client {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.CodecombatApiError({
+                throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
                     responseBody: _response.error.rawBody,
                 });
             case "timeout":
-                throw new errors.CodecombatApiTimeoutError();
+                throw new errors.CodeCombatApiTimeoutError();
             case "unknown":
-                throw new errors.CodecombatApiError({
+                throw new errors.CodeCombatApiError({
                     message: _response.error.errorMessage,
                 });
         }
@@ -164,8 +164,8 @@ export class Client {
      */
     public async getClassrooms(
         handle: string,
-        request?: CodecombatApi.GetUserClassroomsRequest
-    ): Promise<CodecombatApi.ClassroomResponseWithCode[]> {
+        request?: CodeCombatApi.GetUserClassroomsRequest
+    ): Promise<CodeCombatApi.ClassroomResponseWithCode[]> {
         const _queryParams = new URLSearchParams();
         if (request?.retMemberLimit != null) {
             _queryParams.append("retMemberLimit", request?.retMemberLimit.toString());
@@ -173,7 +173,7 @@ export class Client {
 
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodecombatApiEnvironment.Production,
+                this.options.environment ?? environments.CodeCombatApiEnvironment.Production,
                 `/users/${handle}/classrooms`
             ),
             method: "GET",
@@ -189,7 +189,7 @@ export class Client {
         }
 
         if (_response.error.reason === "status-code") {
-            throw new errors.CodecombatApiError({
+            throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
                 responseBody: _response.error.rawBody,
             });
@@ -197,14 +197,14 @@ export class Client {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.CodecombatApiError({
+                throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
                     responseBody: _response.error.rawBody,
                 });
             case "timeout":
-                throw new errors.CodecombatApiTimeoutError();
+                throw new errors.CodeCombatApiTimeoutError();
             case "unknown":
-                throw new errors.CodecombatApiError({
+                throw new errors.CodeCombatApiError({
                     message: _response.error.errorMessage,
                 });
         }
@@ -213,10 +213,10 @@ export class Client {
     /**
      * Set the user's hero.
      */
-    public async setHero(handle: string, request?: CodecombatApi.SetHeroRequest): Promise<CodecombatApi.UserResponse> {
+    public async setHero(handle: string, request?: CodeCombatApi.SetHeroRequest): Promise<CodeCombatApi.UserResponse> {
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodecombatApiEnvironment.Production,
+                this.options.environment ?? environments.CodeCombatApiEnvironment.Production,
                 `/users/${handle}/hero-config`
             ),
             method: "PUT",
@@ -234,7 +234,7 @@ export class Client {
         }
 
         if (_response.error.reason === "status-code") {
-            throw new errors.CodecombatApiError({
+            throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
                 responseBody: _response.error.rawBody,
             });
@@ -242,14 +242,14 @@ export class Client {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.CodecombatApiError({
+                throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
                     responseBody: _response.error.rawBody,
                 });
             case "timeout":
-                throw new errors.CodecombatApiTimeoutError();
+                throw new errors.CodeCombatApiTimeoutError();
             case "unknown":
-                throw new errors.CodecombatApiError({
+                throw new errors.CodeCombatApiError({
                     message: _response.error.errorMessage,
                 });
         }
@@ -260,11 +260,11 @@ export class Client {
      */
     public async setAceConfig(
         handle: string,
-        request?: CodecombatApi.SetAceConfigRequest
-    ): Promise<CodecombatApi.UserResponse> {
+        request?: CodeCombatApi.SetAceConfigRequest
+    ): Promise<CodeCombatApi.UserResponse> {
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodecombatApiEnvironment.Production,
+                this.options.environment ?? environments.CodeCombatApiEnvironment.Production,
                 `/users/${handle}/ace-config`
             ),
             method: "PUT",
@@ -284,7 +284,7 @@ export class Client {
         }
 
         if (_response.error.reason === "status-code") {
-            throw new errors.CodecombatApiError({
+            throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
                 responseBody: _response.error.rawBody,
             });
@@ -292,14 +292,14 @@ export class Client {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.CodecombatApiError({
+                throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
                     responseBody: _response.error.rawBody,
                 });
             case "timeout":
-                throw new errors.CodecombatApiTimeoutError();
+                throw new errors.CodeCombatApiTimeoutError();
             case "unknown":
-                throw new errors.CodecombatApiError({
+                throw new errors.CodeCombatApiError({
                     message: _response.error.errorMessage,
                 });
         }
@@ -314,11 +314,11 @@ export class Client {
      */
     public async addOauth2Identity(
         handle: string,
-        request: CodecombatApi.AddOauth2IdentityRequest
-    ): Promise<CodecombatApi.UserResponse> {
+        request: CodeCombatApi.AddOauth2IdentityRequest
+    ): Promise<CodeCombatApi.UserResponse> {
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodecombatApiEnvironment.Production,
+                this.options.environment ?? environments.CodeCombatApiEnvironment.Production,
                 `/users/${handle}/o-auth-identities`
             ),
             method: "POST",
@@ -338,7 +338,7 @@ export class Client {
         }
 
         if (_response.error.reason === "status-code") {
-            throw new errors.CodecombatApiError({
+            throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
                 responseBody: _response.error.rawBody,
             });
@@ -346,14 +346,14 @@ export class Client {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.CodecombatApiError({
+                throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
                     responseBody: _response.error.rawBody,
                 });
             case "timeout":
-                throw new errors.CodecombatApiTimeoutError();
+                throw new errors.CodeCombatApiTimeoutError();
             case "unknown":
-                throw new errors.CodecombatApiError({
+                throw new errors.CodeCombatApiError({
                     message: _response.error.errorMessage,
                 });
         }
@@ -365,11 +365,11 @@ export class Client {
      */
     public async grantPremiumAccess(
         handle: string,
-        request: CodecombatApi.Subscription
-    ): Promise<CodecombatApi.UserResponse> {
+        request: CodeCombatApi.Subscription
+    ): Promise<CodeCombatApi.UserResponse> {
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodecombatApiEnvironment.Production,
+                this.options.environment ?? environments.CodeCombatApiEnvironment.Production,
                 `/users/${handle}/subscription`
             ),
             method: "PUT",
@@ -385,7 +385,7 @@ export class Client {
         }
 
         if (_response.error.reason === "status-code") {
-            throw new errors.CodecombatApiError({
+            throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
                 responseBody: _response.error.rawBody,
             });
@@ -393,14 +393,14 @@ export class Client {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.CodecombatApiError({
+                throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
                     responseBody: _response.error.rawBody,
                 });
             case "timeout":
-                throw new errors.CodecombatApiTimeoutError();
+                throw new errors.CodeCombatApiTimeoutError();
             case "unknown":
-                throw new errors.CodecombatApiError({
+                throw new errors.CodeCombatApiError({
                     message: _response.error.errorMessage,
                 });
         }
@@ -413,11 +413,11 @@ export class Client {
      */
     public async shortenSubscription(
         handle: string,
-        request: CodecombatApi.Subscription
-    ): Promise<CodecombatApi.UserResponse> {
+        request: CodeCombatApi.Subscription
+    ): Promise<CodeCombatApi.UserResponse> {
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodecombatApiEnvironment.Production,
+                this.options.environment ?? environments.CodeCombatApiEnvironment.Production,
                 `/users/${handle}/shorten-subscription`
             ),
             method: "PUT",
@@ -433,7 +433,7 @@ export class Client {
         }
 
         if (_response.error.reason === "status-code") {
-            throw new errors.CodecombatApiError({
+            throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
                 responseBody: _response.error.rawBody,
             });
@@ -441,14 +441,14 @@ export class Client {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.CodecombatApiError({
+                throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
                     responseBody: _response.error.rawBody,
                 });
             case "timeout":
-                throw new errors.CodecombatApiTimeoutError();
+                throw new errors.CodeCombatApiTimeoutError();
             case "unknown":
-                throw new errors.CodecombatApiError({
+                throw new errors.CodeCombatApiError({
                     message: _response.error.errorMessage,
                 });
         }
@@ -461,11 +461,11 @@ export class Client {
      */
     public async grantClassroomAccess(
         handle: string,
-        request: CodecombatApi.Subscription
-    ): Promise<CodecombatApi.UserResponse> {
+        request: CodeCombatApi.Subscription
+    ): Promise<CodeCombatApi.UserResponse> {
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodecombatApiEnvironment.Production,
+                this.options.environment ?? environments.CodeCombatApiEnvironment.Production,
                 `/users/${handle}/license`
             ),
             method: "PUT",
@@ -481,7 +481,7 @@ export class Client {
         }
 
         if (_response.error.reason === "status-code") {
-            throw new errors.CodecombatApiError({
+            throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
                 responseBody: _response.error.rawBody,
             });
@@ -489,14 +489,14 @@ export class Client {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.CodecombatApiError({
+                throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
                     responseBody: _response.error.rawBody,
                 });
             case "timeout":
-                throw new errors.CodecombatApiTimeoutError();
+                throw new errors.CodeCombatApiTimeoutError();
             case "unknown":
-                throw new errors.CodecombatApiError({
+                throw new errors.CodeCombatApiError({
                     message: _response.error.errorMessage,
                 });
         }
@@ -509,11 +509,11 @@ export class Client {
      */
     public async shortenLicense(
         handle: string,
-        request: CodecombatApi.Subscription
-    ): Promise<CodecombatApi.UserResponse> {
+        request: CodeCombatApi.Subscription
+    ): Promise<CodeCombatApi.UserResponse> {
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodecombatApiEnvironment.Production,
+                this.options.environment ?? environments.CodeCombatApiEnvironment.Production,
                 `/users/${handle}/shorten-license`
             ),
             method: "PUT",
@@ -529,7 +529,7 @@ export class Client {
         }
 
         if (_response.error.reason === "status-code") {
-            throw new errors.CodecombatApiError({
+            throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
                 responseBody: _response.error.rawBody,
             });
@@ -537,14 +537,14 @@ export class Client {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.CodecombatApiError({
+                throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
                     responseBody: _response.error.rawBody,
                 });
             case "timeout":
-                throw new errors.CodecombatApiTimeoutError();
+                throw new errors.CodeCombatApiTimeoutError();
             case "unknown":
-                throw new errors.CodecombatApiError({
+                throw new errors.CodeCombatApiError({
                     message: _response.error.errorMessage,
                 });
         }
@@ -556,7 +556,7 @@ export class Client {
     public async lookup(property: string, value: string): Promise<void> {
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodecombatApiEnvironment.Production,
+                this.options.environment ?? environments.CodeCombatApiEnvironment.Production,
                 `/users/user-lookup/${property}/${value}`
             ),
             method: "GET",
@@ -569,7 +569,7 @@ export class Client {
         }
 
         if (_response.error.reason === "status-code") {
-            throw new errors.CodecombatApiError({
+            throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
                 responseBody: _response.error.rawBody,
             });
@@ -577,14 +577,14 @@ export class Client {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.CodecombatApiError({
+                throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
                     responseBody: _response.error.rawBody,
                 });
             case "timeout":
-                throw new errors.CodecombatApiTimeoutError();
+                throw new errors.CodeCombatApiTimeoutError();
             case "unknown":
-                throw new errors.CodecombatApiError({
+                throw new errors.CodeCombatApiError({
                     message: _response.error.errorMessage,
                 });
         }

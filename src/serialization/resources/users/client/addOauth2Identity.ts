@@ -3,12 +3,12 @@
  */
 
 import * as serializers from "../../..";
-import { CodecombatApi } from "@fern-api/codecombat";
+import { CodeCombatApi } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
 export const Request: core.serialization.Schema<
     serializers.users.addOauth2Identity.Request.Raw,
-    CodecombatApi.AddOauth2IdentityRequest
+    CodeCombatApi.AddOauth2IdentityRequest
 > = core.serialization.object({
     provider: core.serialization.string(),
     accessToken: core.serialization.string().optional(),
@@ -25,7 +25,7 @@ export declare namespace Request {
 
 export const Response: core.serialization.Schema<
     serializers.users.addOauth2Identity.Response.Raw,
-    CodecombatApi.UserResponse
+    CodeCombatApi.UserResponse
 > = core.serialization.lazyObject(async () => (await import("../../..")).UserResponse);
 
 export declare namespace Response {

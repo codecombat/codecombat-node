@@ -10,15 +10,15 @@ import { Client as ClassroomsClient } from "./api/resources/classrooms/client/Cl
 import { Client as StatsClient } from "./api/resources/stats/client/Client";
 import { Client as UsersClient } from "./api/resources/users/client/Client";
 
-export declare namespace CodecombatApiClient {
+export declare namespace CodeCombatApiClient {
     interface Options {
-        environment?: environments.CodecombatApiEnvironment | string;
+        environment?: environments.CodeCombatApiEnvironment | string;
         credentials?: core.Supplier<core.BasicAuth>;
     }
 }
 
-export class CodecombatApiClient {
-    constructor(private readonly options: CodecombatApiClient.Options) {}
+export class CodeCombatApiClient {
+    constructor(private readonly options: CodeCombatApiClient.Options) {}
 
     #auth: AuthClient | undefined;
 

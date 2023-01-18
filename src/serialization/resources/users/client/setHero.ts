@@ -3,10 +3,10 @@
  */
 
 import * as serializers from "../../..";
-import { CodecombatApi } from "@fern-api/codecombat";
+import { CodeCombatApi } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
-export const Request: core.serialization.Schema<serializers.users.setHero.Request.Raw, CodecombatApi.SetHeroRequest> =
+export const Request: core.serialization.Schema<serializers.users.setHero.Request.Raw, CodeCombatApi.SetHeroRequest> =
     core.serialization.object({
         thangType: core.serialization.lazy(async () => (await import("../../..")).ObjectId).optional(),
     });
@@ -17,7 +17,7 @@ export declare namespace Request {
     }
 }
 
-export const Response: core.serialization.Schema<serializers.users.setHero.Response.Raw, CodecombatApi.UserResponse> =
+export const Response: core.serialization.Schema<serializers.users.setHero.Response.Raw, CodeCombatApi.UserResponse> =
     core.serialization.lazyObject(async () => (await import("../../..")).UserResponse);
 
 export declare namespace Response {

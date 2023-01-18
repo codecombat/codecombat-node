@@ -1,4 +1,4 @@
-export * as CodecombatApi from "./api";
-export { CodecombatApiClient } from "./Client";
-export { CodecombatApiEnvironment } from "./environments";
-export { CodecombatApiError, CodecombatApiTimeoutError } from "./errors";
+export * as CodeCombatApi from "./api";
+export { CodeCombatApiClient } from "./Client";
+export { CodeCombatApiEnvironment } from "./environments";
+export { CodeCombatApiError, CodeCombatApiTimeoutError } from "./errors";

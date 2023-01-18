@@ -3,10 +3,10 @@
  */
 
 import * as serializers from "../../..";
-import { CodecombatApi } from "@fern-api/codecombat";
+import { CodeCombatApi } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
-export const UserStats: core.serialization.ObjectSchema<serializers.UserStats.Raw, CodecombatApi.UserStats> =
+export const UserStats: core.serialization.ObjectSchema<serializers.UserStats.Raw, CodeCombatApi.UserStats> =
     core.serialization.object({
         gamesCompleted: core.serialization.number().optional(),
         playTime: core.serialization.number().optional(),

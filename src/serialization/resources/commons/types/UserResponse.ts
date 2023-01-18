@@ -3,10 +3,10 @@
  */
 
 import * as serializers from "../../..";
-import { CodecombatApi } from "@fern-api/codecombat";
+import { CodeCombatApi } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
-export const UserResponse: core.serialization.ObjectSchema<serializers.UserResponse.Raw, CodecombatApi.UserResponse> =
+export const UserResponse: core.serialization.ObjectSchema<serializers.UserResponse.Raw, CodeCombatApi.UserResponse> =
     core.serialization.object({
         id: core.serialization.property(
             "_id",

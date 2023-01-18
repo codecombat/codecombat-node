@@ -3,10 +3,10 @@
  */
 
 import * as serializers from "../../..";
-import { CodecombatApi } from "@fern-api/codecombat";
+import { CodeCombatApi } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
-export const RoleString: core.serialization.Schema<serializers.RoleString.Raw, CodecombatApi.RoleString> =
+export const RoleString: core.serialization.Schema<serializers.RoleString.Raw, CodeCombatApi.RoleString> =
     core.serialization.string();
 
 export declare namespace RoleString {

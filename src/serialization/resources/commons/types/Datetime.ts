@@ -3,10 +3,10 @@
  */
 
 import * as serializers from "../../..";
-import { CodecombatApi } from "@fern-api/codecombat";
+import { CodeCombatApi } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
-export const Datetime: core.serialization.Schema<serializers.Datetime.Raw, CodecombatApi.Datetime> =
+export const Datetime: core.serialization.Schema<serializers.Datetime.Raw, CodeCombatApi.Datetime> =
     core.serialization.string();
 
 export declare namespace Datetime {

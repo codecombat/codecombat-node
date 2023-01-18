@@ -3,10 +3,10 @@
  */
 
 import * as serializers from "../../..";
-import { CodecombatApi } from "@fern-api/codecombat";
+import { CodeCombatApi } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
-export const ObjectId: core.serialization.Schema<serializers.ObjectId.Raw, CodecombatApi.ObjectId> =
+export const ObjectId: core.serialization.Schema<serializers.ObjectId.Raw, CodeCombatApi.ObjectId> =
     core.serialization.string();
 
 export declare namespace ObjectId {
