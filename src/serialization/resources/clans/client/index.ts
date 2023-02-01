@@ -1,1 +1,1 @@
-export * as put from "./put";
+export * from "./requests";

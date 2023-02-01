@@ -29,14 +29,7 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            body: await serializers.users.create.Request.json({
-                name: request.name,
-                email: request.email,
-                role: request.role,
-                preferredLanguage: request.preferredLanguage,
-                heroConfig: request.heroConfig,
-                birthday: request.birthday,
-            }),
+            body: await serializers.CreateUserRequest.json(request),
         });
         if (_response.ok) {
             return;
@@ -45,7 +38,7 @@ export class Client {
         if (_response.error.reason === "status-code") {
             throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
-                responseBody: _response.error.rawBody,
+                body: _response.error.body,
             });
         }
 
@@ -53,7 +46,7 @@ export class Client {
             case "non-json":
                 throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
-                    responseBody: _response.error.rawBody,
+                    body: _response.error.rawBody,
                 });
             case "timeout":
                 throw new errors.CodeCombatApiTimeoutError();
@@ -67,10 +60,11 @@ export class Client {
     /**
      * Returns a `User`.
      */
-    public async get(handle: string, request?: CodeCombatApi.GetUserRequest): Promise<CodeCombatApi.UserResponse> {
+    public async get(handle: string, request: CodeCombatApi.GetUserRequest = {}): Promise<CodeCombatApi.UserResponse> {
+        const { includePlayTime } = request;
         const _queryParams = new URLSearchParams();
-        if (request?.includePlayTime != null) {
-            _queryParams.append("includePlayTime", request?.includePlayTime);
+        if (includePlayTime != null) {
+            _queryParams.append("includePlayTime", includePlayTime);
         }
 
         const _response = await core.fetcher({
@@ -85,13 +79,13 @@ export class Client {
             queryParameters: _queryParams,
         });
         if (_response.ok) {
-            return await serializers.users.get.Response.parse(_response.body as serializers.users.get.Response.Raw);
+            return await serializers.UserResponse.parse(_response.body as serializers.UserResponse.Raw);
         }
 
         if (_response.error.reason === "status-code") {
             throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
-                responseBody: _response.error.rawBody,
+                body: _response.error.body,
             });
         }
 
@@ -99,7 +93,7 @@ export class Client {
             case "non-json":
                 throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
-                    responseBody: _response.error.rawBody,
+                    body: _response.error.rawBody,
                 });
             case "timeout":
                 throw new errors.CodeCombatApiTimeoutError();
@@ -126,21 +120,16 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            body: await serializers.users.modifyUser.Request.json({
-                name: request.name,
-                birthday: request.birthday,
-            }),
+            body: await serializers.ModifyUserRequest.json(request),
         });
         if (_response.ok) {
-            return await serializers.users.modifyUser.Response.parse(
-                _response.body as serializers.users.modifyUser.Response.Raw
-            );
+            return await serializers.UserResponse.parse(_response.body as serializers.UserResponse.Raw);
         }
 
         if (_response.error.reason === "status-code") {
             throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
-                responseBody: _response.error.rawBody,
+                body: _response.error.body,
             });
         }
 
@@ -148,7 +137,7 @@ export class Client {
             case "non-json":
                 throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
-                    responseBody: _response.error.rawBody,
+                    body: _response.error.rawBody,
                 });
             case "timeout":
                 throw new errors.CodeCombatApiTimeoutError();
@@ -164,11 +153,12 @@ export class Client {
      */
     public async getClassrooms(
         handle: string,
-        request?: CodeCombatApi.GetUserClassroomsRequest
+        request: CodeCombatApi.GetUserClassroomsRequest = {}
     ): Promise<CodeCombatApi.ClassroomResponseWithCode[]> {
+        const { retMemberLimit } = request;
         const _queryParams = new URLSearchParams();
-        if (request?.retMemberLimit != null) {
-            _queryParams.append("retMemberLimit", request?.retMemberLimit.toString());
+        if (retMemberLimit != null) {
+            _queryParams.append("retMemberLimit", retMemberLimit.toString());
         }
 
         const _response = await core.fetcher({
@@ -191,7 +181,7 @@ export class Client {
         if (_response.error.reason === "status-code") {
             throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
-                responseBody: _response.error.rawBody,
+                body: _response.error.body,
             });
         }
 
@@ -199,7 +189,7 @@ export class Client {
             case "non-json":
                 throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
-                    responseBody: _response.error.rawBody,
+                    body: _response.error.rawBody,
                 });
             case "timeout":
                 throw new errors.CodeCombatApiTimeoutError();
@@ -213,7 +203,10 @@ export class Client {
     /**
      * Set the user's hero.
      */
-    public async setHero(handle: string, request?: CodeCombatApi.SetHeroRequest): Promise<CodeCombatApi.UserResponse> {
+    public async setHero(
+        handle: string,
+        request: CodeCombatApi.SetHeroRequest = {}
+    ): Promise<CodeCombatApi.UserResponse> {
         const _response = await core.fetcher({
             url: urlJoin(
                 this.options.environment ?? environments.CodeCombatApiEnvironment.Production,
@@ -223,20 +216,16 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            body: await serializers.users.setHero.Request.json({
-                thangType: request?.thangType,
-            }),
+            body: await serializers.SetHeroRequest.json(request),
         });
         if (_response.ok) {
-            return await serializers.users.setHero.Response.parse(
-                _response.body as serializers.users.setHero.Response.Raw
-            );
+            return await serializers.UserResponse.parse(_response.body as serializers.UserResponse.Raw);
         }
 
         if (_response.error.reason === "status-code") {
             throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
-                responseBody: _response.error.rawBody,
+                body: _response.error.body,
             });
         }
 
@@ -244,7 +233,7 @@ export class Client {
             case "non-json":
                 throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
-                    responseBody: _response.error.rawBody,
+                    body: _response.error.rawBody,
                 });
             case "timeout":
                 throw new errors.CodeCombatApiTimeoutError();
@@ -260,7 +249,7 @@ export class Client {
      */
     public async setAceConfig(
         handle: string,
-        request?: CodeCombatApi.SetAceConfigRequest
+        request: CodeCombatApi.SetAceConfigRequest = {}
     ): Promise<CodeCombatApi.UserResponse> {
         const _response = await core.fetcher({
             url: urlJoin(
@@ -271,22 +260,16 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            body: await serializers.users.setAceConfig.Request.json({
-                liveCompletion: request?.liveCompletion,
-                behaviors: request?.behaviors,
-                language: request?.language,
-            }),
+            body: await serializers.SetAceConfigRequest.json(request),
         });
         if (_response.ok) {
-            return await serializers.users.setAceConfig.Response.parse(
-                _response.body as serializers.users.setAceConfig.Response.Raw
-            );
+            return await serializers.UserResponse.parse(_response.body as serializers.UserResponse.Raw);
         }
 
         if (_response.error.reason === "status-code") {
             throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
-                responseBody: _response.error.rawBody,
+                body: _response.error.body,
             });
         }
 
@@ -294,7 +277,7 @@ export class Client {
             case "non-json":
                 throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
-                    responseBody: _response.error.rawBody,
+                    body: _response.error.rawBody,
                 });
             case "timeout":
                 throw new errors.CodeCombatApiTimeoutError();
@@ -325,22 +308,16 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            body: await serializers.users.addOauth2Identity.Request.json({
-                provider: request.provider,
-                accessToken: request.accessToken,
-                code: request.code,
-            }),
+            body: await serializers.AddOauth2IdentityRequest.json(request),
         });
         if (_response.ok) {
-            return await serializers.users.addOauth2Identity.Response.parse(
-                _response.body as serializers.users.addOauth2Identity.Response.Raw
-            );
+            return await serializers.UserResponse.parse(_response.body as serializers.UserResponse.Raw);
         }
 
         if (_response.error.reason === "status-code") {
             throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
-                responseBody: _response.error.rawBody,
+                body: _response.error.body,
             });
         }
 
@@ -348,7 +325,7 @@ export class Client {
             case "non-json":
                 throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
-                    responseBody: _response.error.rawBody,
+                    body: _response.error.rawBody,
                 });
             case "timeout":
                 throw new errors.CodeCombatApiTimeoutError();
@@ -376,18 +353,16 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            body: await serializers.users.grantPremiumAccess.Request.json(request),
+            body: await serializers.Subscription.json(request),
         });
         if (_response.ok) {
-            return await serializers.users.grantPremiumAccess.Response.parse(
-                _response.body as serializers.users.grantPremiumAccess.Response.Raw
-            );
+            return await serializers.UserResponse.parse(_response.body as serializers.UserResponse.Raw);
         }
 
         if (_response.error.reason === "status-code") {
             throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
-                responseBody: _response.error.rawBody,
+                body: _response.error.body,
             });
         }
 
@@ -395,7 +370,7 @@ export class Client {
             case "non-json":
                 throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
-                    responseBody: _response.error.rawBody,
+                    body: _response.error.rawBody,
                 });
             case "timeout":
                 throw new errors.CodeCombatApiTimeoutError();
@@ -424,18 +399,16 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            body: await serializers.users.shortenSubscription.Request.json(request),
+            body: await serializers.Subscription.json(request),
         });
         if (_response.ok) {
-            return await serializers.users.shortenSubscription.Response.parse(
-                _response.body as serializers.users.shortenSubscription.Response.Raw
-            );
+            return await serializers.UserResponse.parse(_response.body as serializers.UserResponse.Raw);
         }
 
         if (_response.error.reason === "status-code") {
             throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
-                responseBody: _response.error.rawBody,
+                body: _response.error.body,
             });
         }
 
@@ -443,7 +416,7 @@ export class Client {
             case "non-json":
                 throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
-                    responseBody: _response.error.rawBody,
+                    body: _response.error.rawBody,
                 });
             case "timeout":
                 throw new errors.CodeCombatApiTimeoutError();
@@ -472,18 +445,16 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            body: await serializers.users.grantClassroomAccess.Request.json(request),
+            body: await serializers.Subscription.json(request),
         });
         if (_response.ok) {
-            return await serializers.users.grantClassroomAccess.Response.parse(
-                _response.body as serializers.users.grantClassroomAccess.Response.Raw
-            );
+            return await serializers.UserResponse.parse(_response.body as serializers.UserResponse.Raw);
         }
 
         if (_response.error.reason === "status-code") {
             throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
-                responseBody: _response.error.rawBody,
+                body: _response.error.body,
             });
         }
 
@@ -491,7 +462,7 @@ export class Client {
             case "non-json":
                 throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
-                    responseBody: _response.error.rawBody,
+                    body: _response.error.rawBody,
                 });
             case "timeout":
                 throw new errors.CodeCombatApiTimeoutError();
@@ -520,18 +491,16 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            body: await serializers.users.shortenLicense.Request.json(request),
+            body: await serializers.Subscription.json(request),
         });
         if (_response.ok) {
-            return await serializers.users.shortenLicense.Response.parse(
-                _response.body as serializers.users.shortenLicense.Response.Raw
-            );
+            return await serializers.UserResponse.parse(_response.body as serializers.UserResponse.Raw);
         }
 
         if (_response.error.reason === "status-code") {
             throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
-                responseBody: _response.error.rawBody,
+                body: _response.error.body,
             });
         }
 
@@ -539,7 +508,7 @@ export class Client {
             case "non-json":
                 throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
-                    responseBody: _response.error.rawBody,
+                    body: _response.error.rawBody,
                 });
             case "timeout":
                 throw new errors.CodeCombatApiTimeoutError();
@@ -571,7 +540,7 @@ export class Client {
         if (_response.error.reason === "status-code") {
             throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
-                responseBody: _response.error.rawBody,
+                body: _response.error.body,
             });
         }
 
@@ -579,7 +548,7 @@ export class Client {
             case "non-json":
                 throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
-                    responseBody: _response.error.rawBody,
+                    body: _response.error.rawBody,
                 });
             case "timeout":
                 throw new errors.CodeCombatApiTimeoutError();

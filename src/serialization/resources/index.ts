@@ -8,3 +8,6 @@ export * as stats from "./stats";
 export * from "./stats/types";
 export * as users from "./users";
 export * from "./users/types";
+export * from "./clans/client/requests";
+export * from "./classrooms/client/requests";
+export * from "./users/client/requests";

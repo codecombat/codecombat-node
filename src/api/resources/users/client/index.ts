@@ -1,11 +1,1 @@
 export * from "./requests";
-export * as get from "./get";
-export * as modifyUser from "./modifyUser";
-export * as getClassrooms from "./getClassrooms";
-export * as setHero from "./setHero";
-export * as setAceConfig from "./setAceConfig";
-export * as addOauth2Identity from "./addOauth2Identity";
-export * as grantPremiumAccess from "./grantPremiumAccess";
-export * as shortenSubscription from "./shortenSubscription";
-export * as grantClassroomAccess from "./grantClassroomAccess";
-export * as shortenLicense from "./shortenLicense";

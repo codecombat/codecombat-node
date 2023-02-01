@@ -32,18 +32,16 @@ export class Client {
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            body: await serializers.clans.put.Request.json({
-                userId: request.userId,
-            }),
+            body: await serializers.ClanRequest.json(request),
         });
         if (_response.ok) {
-            return await serializers.clans.put.Response.parse(_response.body as serializers.clans.put.Response.Raw);
+            return await serializers.ClanResponse.parse(_response.body as serializers.ClanResponse.Raw);
         }
 
         if (_response.error.reason === "status-code") {
             throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
-                responseBody: _response.error.rawBody,
+                body: _response.error.body,
             });
         }
 
@@ -51,7 +49,7 @@ export class Client {
             case "non-json":
                 throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
-                    responseBody: _response.error.rawBody,
+                    body: _response.error.rawBody,
                 });
             case "timeout":
                 throw new errors.CodeCombatApiTimeoutError();

@@ -23,25 +23,26 @@ export class Client {
      * Returns the playtime stats
      */
     public async getPlaytimeStats(
-        request?: CodeCombatApi.GetPlaytimeStatsRequest
+        request: CodeCombatApi.GetPlaytimeStatsRequest = {}
     ): Promise<CodeCombatApi.PlaytimeStatsResponse> {
+        const { startDate, endDate, country } = request;
         const _queryParams = new URLSearchParams();
-        if (request?.startDate != null) {
-            _queryParams.append("startDate", request?.startDate);
+        if (startDate != null) {
+            _queryParams.append("startDate", startDate);
         }
 
-        if (request?.endDate != null) {
-            _queryParams.append("endDate", request?.endDate);
+        if (endDate != null) {
+            _queryParams.append("endDate", endDate);
         }
 
-        if (request?.country != null) {
-            _queryParams.append("country", request?.country);
+        if (country != null) {
+            _queryParams.append("country", country);
         }
 
         const _response = await core.fetcher({
             url: urlJoin(
                 this.options.environment ?? environments.CodeCombatApiEnvironment.Production,
-                "playtime-stats"
+                "/playtime-stats"
             ),
             method: "GET",
             headers: {
@@ -50,15 +51,15 @@ export class Client {
             queryParameters: _queryParams,
         });
         if (_response.ok) {
-            return await serializers.stats.getPlaytimeStats.Response.parse(
-                _response.body as serializers.stats.getPlaytimeStats.Response.Raw
+            return await serializers.PlaytimeStatsResponse.parse(
+                _response.body as serializers.PlaytimeStatsResponse.Raw
             );
         }
 
         if (_response.error.reason === "status-code") {
             throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
-                responseBody: _response.error.rawBody,
+                body: _response.error.body,
             });
         }
 
@@ -66,7 +67,7 @@ export class Client {
             case "non-json":
                 throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
-                    responseBody: _response.error.rawBody,
+                    body: _response.error.rawBody,
                 });
             case "timeout":
                 throw new errors.CodeCombatApiTimeoutError();
@@ -82,22 +83,23 @@ export class Client {
      */
     public async getLicenseStats(): Promise<CodeCombatApi.LicenseStatsResponse> {
         const _response = await core.fetcher({
-            url: urlJoin(this.options.environment ?? environments.CodeCombatApiEnvironment.Production, "license-stats"),
+            url: urlJoin(
+                this.options.environment ?? environments.CodeCombatApiEnvironment.Production,
+                "/license-stats"
+            ),
             method: "GET",
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
         });
         if (_response.ok) {
-            return await serializers.stats.getLicenseStats.Response.parse(
-                _response.body as serializers.stats.getLicenseStats.Response.Raw
-            );
+            return await serializers.LicenseStatsResponse.parse(_response.body as serializers.LicenseStatsResponse.Raw);
         }
 
         if (_response.error.reason === "status-code") {
             throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
-                responseBody: _response.error.rawBody,
+                body: _response.error.body,
             });
         }
 
@@ -105,7 +107,7 @@ export class Client {
             case "non-json":
                 throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
-                    responseBody: _response.error.rawBody,
+                    body: _response.error.rawBody,
                 });
             case "timeout":
                 throw new errors.CodeCombatApiTimeoutError();

@@ -22,22 +22,23 @@ export class Client {
      * Logs a user in.
      */
     public async get(request: CodeCombatApi.LoginUserRequest): Promise<void> {
+        const { provider, accessToken, code, redirect, errorRedirect } = request;
         const _queryParams = new URLSearchParams();
-        _queryParams.append("provider", request.provider);
-        if (request.accessToken != null) {
-            _queryParams.append("accessToken", request.accessToken);
+        _queryParams.append("provider", provider);
+        if (accessToken != null) {
+            _queryParams.append("accessToken", accessToken);
         }
 
-        if (request.code != null) {
-            _queryParams.append("code", request.code);
+        if (code != null) {
+            _queryParams.append("code", code);
         }
 
-        if (request.redirect != null) {
-            _queryParams.append("redirect", request.redirect);
+        if (redirect != null) {
+            _queryParams.append("redirect", redirect);
         }
 
-        if (request.errorRedirect != null) {
-            _queryParams.append("errorRedirect", request.errorRedirect);
+        if (errorRedirect != null) {
+            _queryParams.append("errorRedirect", errorRedirect);
         }
 
         const _response = await core.fetcher({
@@ -58,7 +59,7 @@ export class Client {
         if (_response.error.reason === "status-code") {
             throw new errors.CodeCombatApiError({
                 statusCode: _response.error.statusCode,
-                responseBody: _response.error.rawBody,
+                body: _response.error.body,
             });
         }
 
@@ -66,7 +67,7 @@ export class Client {
             case "non-json":
                 throw new errors.CodeCombatApiError({
                     statusCode: _response.error.statusCode,
-                    responseBody: _response.error.rawBody,
+                    body: _response.error.rawBody,
                 });
             case "timeout":
                 throw new errors.CodeCombatApiTimeoutError();

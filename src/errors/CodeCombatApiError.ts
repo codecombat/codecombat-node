@@ -4,29 +4,17 @@
 
 export class CodeCombatApiError extends Error {
     readonly statusCode?: number;
-    readonly responseBody?: unknown;
+    readonly body?: unknown;
 
-    constructor({
-        message,
-        statusCode,
-        responseBody,
-    }: {
-        message?: string;
-        statusCode?: number;
-        responseBody?: string;
-    }) {
+    constructor({ message, statusCode, body }: { message?: string; statusCode?: number; body?: unknown }) {
         super(message);
         Object.setPrototypeOf(this, CodeCombatApiError.prototype);
         if (statusCode != null) {
             this.statusCode = statusCode;
         }
 
-        if (responseBody != null) {
-            try {
-                this.responseBody = JSON.parse(responseBody);
-            } catch {
-                this.responseBody = responseBody;
-            }
+        if (body !== undefined) {
+            this.body = body;
         }
     }
 }
