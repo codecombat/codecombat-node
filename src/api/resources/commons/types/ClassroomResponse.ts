@@ -9,8 +9,11 @@ import { CodeCombat } from "@fern-api/codecombat";
  */
 export interface ClassroomResponse {
     id?: CodeCombat.ObjectIdString;
+    /** The name of the classroom */
     name?: string;
+    /** List of _ids of the student members of the classroom */
     members?: CodeCombat.ObjectIdString[];
+    /** The _id of the teacher owner of the classroom. */
     ownerId?: CodeCombat.ObjectIdString;
     description?: string;
     courses?: CodeCombat.Course[];
