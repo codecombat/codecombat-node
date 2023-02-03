@@ -3,18 +3,18 @@
  */
 
 import * as serializers from "../../..";
-import { CodeCombatApi } from "@fern-api/codecombat";
+import { CodeCombat } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
-export const License: core.serialization.ObjectSchema<serializers.License.Raw, CodeCombatApi.License> =
+export const License: core.serialization.ObjectSchema<serializers.License.Raw, CodeCombat.License> =
     core.serialization.object({
-        ends: core.serialization.lazy(async () => (await import("../../..")).Datetime).optional(),
+        ends: core.serialization.lazy(async () => (await import("../../..")).DatetimeString).optional(),
         active: core.serialization.boolean().optional(),
     });
 
 export declare namespace License {
     interface Raw {
-        ends?: serializers.Datetime.Raw | null;
+        ends?: serializers.DatetimeString.Raw | null;
         active?: boolean | null;
     }
 }

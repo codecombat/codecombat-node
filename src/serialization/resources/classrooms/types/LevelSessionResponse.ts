@@ -3,36 +3,36 @@
  */
 
 import * as serializers from "../../..";
-import { CodeCombatApi } from "@fern-api/codecombat";
+import { CodeCombat } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
 export const LevelSessionResponse: core.serialization.ObjectSchema<
     serializers.LevelSessionResponse.Raw,
-    CodeCombatApi.LevelSessionResponse
+    CodeCombat.LevelSessionResponse
 > = core.serialization.object({
-    state: core.serialization.lazyObject(async () => (await import("../../..")).LevelSessionState),
-    level: core.serialization.lazyObject(async () => (await import("../../..")).LevelSessionLevelInfo),
-    levelId: core.serialization.property("levelID", core.serialization.string()),
-    creator: core.serialization.lazy(async () => (await import("../../..")).ObjectId),
-    playtime: core.serialization.number(),
-    changed: core.serialization.lazy(async () => (await import("../../..")).Datetime),
-    created: core.serialization.lazy(async () => (await import("../../..")).Datetime),
-    dateFirstCompleted: core.serialization.lazy(async () => (await import("../../..")).Datetime),
-    submitted: core.serialization.boolean(),
-    published: core.serialization.boolean(),
+    state: core.serialization.lazyObject(async () => (await import("../../..")).State).optional(),
+    level: core.serialization.lazyObject(async () => (await import("../../..")).Level).optional(),
+    levelId: core.serialization.property("levelID", core.serialization.string().optional()),
+    creator: core.serialization.lazy(async () => (await import("../../..")).ObjectIdString).optional(),
+    playtime: core.serialization.number().optional(),
+    changed: core.serialization.lazy(async () => (await import("../../..")).DatetimeString).optional(),
+    created: core.serialization.lazy(async () => (await import("../../..")).DatetimeString).optional(),
+    dateFirstCompleted: core.serialization.lazy(async () => (await import("../../..")).DatetimeString).optional(),
+    submitted: core.serialization.boolean().optional(),
+    published: core.serialization.boolean().optional(),
 });
 
 export declare namespace LevelSessionResponse {
     interface Raw {
-        state: serializers.LevelSessionState.Raw;
-        level: serializers.LevelSessionLevelInfo.Raw;
-        levelID: string;
-        creator: serializers.ObjectId.Raw;
-        playtime: number;
-        changed: serializers.Datetime.Raw;
-        created: serializers.Datetime.Raw;
-        dateFirstCompleted: serializers.Datetime.Raw;
-        submitted: boolean;
-        published: boolean;
+        state?: serializers.State.Raw | null;
+        level?: serializers.Level.Raw | null;
+        levelID?: string | null;
+        creator?: serializers.ObjectIdString.Raw | null;
+        playtime?: number | null;
+        changed?: serializers.DatetimeString.Raw | null;
+        created?: serializers.DatetimeString.Raw | null;
+        dateFirstCompleted?: serializers.DatetimeString.Raw | null;
+        submitted?: boolean | null;
+        published?: boolean | null;
     }
 }

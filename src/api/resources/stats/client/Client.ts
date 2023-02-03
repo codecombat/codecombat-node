@@ -4,14 +4,14 @@
 
 import * as environments from "../../../../environments";
 import * as core from "../../../../core";
-import { CodeCombatApi } from "@fern-api/codecombat";
+import { CodeCombat } from "@fern-api/codecombat";
 import urlJoin from "url-join";
 import * as serializers from "../../../../serialization";
 import * as errors from "../../../../errors";
 
 export declare namespace Client {
     interface Options {
-        environment?: environments.CodeCombatApiEnvironment | string;
+        environment?: environments.CodeCombatEnvironment | string;
         credentials?: core.Supplier<core.BasicAuth>;
     }
 }
@@ -23,8 +23,8 @@ export class Client {
      * Returns the playtime stats
      */
     public async getPlaytimeStats(
-        request: CodeCombatApi.GetPlaytimeStatsRequest = {}
-    ): Promise<CodeCombatApi.PlaytimeStatsResponse> {
+        request: CodeCombat.GetPlaytimeStats = {}
+    ): Promise<CodeCombat.PlaytimeStatsResponse> {
         const { startDate, endDate, country } = request;
         const _queryParams = new URLSearchParams();
         if (startDate != null) {
@@ -40,10 +40,7 @@ export class Client {
         }
 
         const _response = await core.fetcher({
-            url: urlJoin(
-                this.options.environment ?? environments.CodeCombatApiEnvironment.Production,
-                "/playtime-stats"
-            ),
+            url: urlJoin(this.options.environment ?? environments.CodeCombatEnvironment.Production, "/playtime-stats"),
             method: "GET",
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
@@ -57,7 +54,7 @@ export class Client {
         }
 
         if (_response.error.reason === "status-code") {
-            throw new errors.CodeCombatApiError({
+            throw new errors.CodeCombatError({
                 statusCode: _response.error.statusCode,
                 body: _response.error.body,
             });
@@ -65,14 +62,14 @@ export class Client {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.CodeCombatApiError({
+                throw new errors.CodeCombatError({
                     statusCode: _response.error.statusCode,
                     body: _response.error.rawBody,
                 });
             case "timeout":
-                throw new errors.CodeCombatApiTimeoutError();
+                throw new errors.CodeCombatTimeoutError();
             case "unknown":
-                throw new errors.CodeCombatApiError({
+                throw new errors.CodeCombatError({
                     message: _response.error.errorMessage,
                 });
         }
@@ -81,12 +78,9 @@ export class Client {
     /**
      * Returns the license stats
      */
-    public async getLicenseStats(): Promise<CodeCombatApi.LicenseStatsResponse> {
+    public async getLicenseStats(): Promise<CodeCombat.LicenseStatsResponse> {
         const _response = await core.fetcher({
-            url: urlJoin(
-                this.options.environment ?? environments.CodeCombatApiEnvironment.Production,
-                "/license-stats"
-            ),
+            url: urlJoin(this.options.environment ?? environments.CodeCombatEnvironment.Production, "/license-stats"),
             method: "GET",
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
@@ -97,7 +91,7 @@ export class Client {
         }
 
         if (_response.error.reason === "status-code") {
-            throw new errors.CodeCombatApiError({
+            throw new errors.CodeCombatError({
                 statusCode: _response.error.statusCode,
                 body: _response.error.body,
             });
@@ -105,14 +99,14 @@ export class Client {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.CodeCombatApiError({
+                throw new errors.CodeCombatError({
                     statusCode: _response.error.statusCode,
                     body: _response.error.rawBody,
                 });
             case "timeout":
-                throw new errors.CodeCombatApiTimeoutError();
+                throw new errors.CodeCombatTimeoutError();
             case "unknown":
-                throw new errors.CodeCombatApiError({
+                throw new errors.CodeCombatError({
                     message: _response.error.errorMessage,
                 });
         }

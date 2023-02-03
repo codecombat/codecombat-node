@@ -3,16 +3,16 @@
  */
 
 import * as serializers from "../../../..";
-import { CodeCombatApi } from "@fern-api/codecombat";
+import { CodeCombat } from "@fern-api/codecombat";
 import * as core from "../../../../../core";
 
 export const CreateUserRequest: core.serialization.Schema<
     serializers.CreateUserRequest.Raw,
-    CodeCombatApi.CreateUserRequest
+    CodeCombat.CreateUserRequest
 > = core.serialization.object({
     name: core.serialization.string(),
     email: core.serialization.string(),
-    role: core.serialization.string().optional(),
+    role: core.serialization.lazy(async () => (await import("../../../..")).UserRole).optional(),
     preferredLanguage: core.serialization.string().optional(),
     heroConfig: core.serialization.lazyObject(async () => (await import("../../../..")).HeroConfig).optional(),
     birthday: core.serialization.string().optional(),
@@ -22,7 +22,7 @@ export declare namespace CreateUserRequest {
     interface Raw {
         name: string;
         email: string;
-        role?: string | null;
+        role?: serializers.UserRole.Raw | null;
         preferredLanguage?: string | null;
         heroConfig?: serializers.HeroConfig.Raw | null;
         birthday?: string | null;

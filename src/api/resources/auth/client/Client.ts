@@ -4,13 +4,13 @@
 
 import * as environments from "../../../../environments";
 import * as core from "../../../../core";
-import { CodeCombatApi } from "@fern-api/codecombat";
+import { CodeCombat } from "@fern-api/codecombat";
 import urlJoin from "url-join";
 import * as errors from "../../../../errors";
 
 export declare namespace Client {
     interface Options {
-        environment?: environments.CodeCombatApiEnvironment | string;
+        environment?: environments.CodeCombatEnvironment | string;
         credentials?: core.Supplier<core.BasicAuth>;
     }
 }
@@ -19,9 +19,10 @@ export class Client {
     constructor(private readonly options: Client.Options) {}
 
     /**
-     * Logs a user in.
+     * Logs a [user](#users) in. #### Example ```javascript url = `https://codecombat.com/auth/login-o-auth?provider=${OAUTH_PROVIDER_ID}&accessToken=1234` res.redirect(url) // User is sent to this CodeCombat URL and assuming everything checks out,  // is logged in and redirected to the home page. ``` In this example, we call your lookup URL (let's say, `https://oauth.provider/user?t=<%= accessToken %>`) with the access token (`1234`). The lookup URL returns `{ id: 'abcd' }` in this case. We will match this `id` with the OAuthIdentity stored in the user information in our db. If everything checks out, the user is logged in and redirected to the home page.
+     *
      */
-    public async get(request: CodeCombatApi.LoginUserRequest): Promise<void> {
+    public async get(request: CodeCombat.GetUserAuthRequest): Promise<void> {
         const { provider, accessToken, code, redirect, errorRedirect } = request;
         const _queryParams = new URLSearchParams();
         _queryParams.append("provider", provider);
@@ -43,7 +44,7 @@ export class Client {
 
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodeCombatApiEnvironment.Production,
+                this.options.environment ?? environments.CodeCombatEnvironment.Production,
                 "/auth/login-o-auth"
             ),
             method: "GET",
@@ -57,7 +58,7 @@ export class Client {
         }
 
         if (_response.error.reason === "status-code") {
-            throw new errors.CodeCombatApiError({
+            throw new errors.CodeCombatError({
                 statusCode: _response.error.statusCode,
                 body: _response.error.body,
             });
@@ -65,14 +66,14 @@ export class Client {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.CodeCombatApiError({
+                throw new errors.CodeCombatError({
                     statusCode: _response.error.statusCode,
                     body: _response.error.rawBody,
                 });
             case "timeout":
-                throw new errors.CodeCombatApiTimeoutError();
+                throw new errors.CodeCombatTimeoutError();
             case "unknown":
-                throw new errors.CodeCombatApiError({
+                throw new errors.CodeCombatError({
                     message: _response.error.errorMessage,
                 });
         }

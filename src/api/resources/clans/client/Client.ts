@@ -4,14 +4,14 @@
 
 import * as environments from "../../../../environments";
 import * as core from "../../../../core";
-import { CodeCombatApi } from "@fern-api/codecombat";
+import { CodeCombat } from "@fern-api/codecombat";
 import urlJoin from "url-join";
 import * as serializers from "../../../../serialization";
 import * as errors from "../../../../errors";
 
 export declare namespace Client {
     interface Options {
-        environment?: environments.CodeCombatApiEnvironment | string;
+        environment?: environments.CodeCombatEnvironment | string;
         credentials?: core.Supplier<core.BasicAuth>;
     }
 }
@@ -22,24 +22,24 @@ export class Client {
     /**
      * Upserts a user into the clan.
      */
-    public async put(handle: string, request: CodeCombatApi.ClanRequest): Promise<CodeCombatApi.ClanResponse> {
+    public async upsertClan(handle: string, request: CodeCombat.UpsertClanRequest): Promise<CodeCombat.ClanResponse> {
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodeCombatApiEnvironment.Production,
-                `/clan/${handle}/members`
+                this.options.environment ?? environments.CodeCombatEnvironment.Production,
+                `/clan/${handle}/members/`
             ),
             method: "PUT",
             headers: {
                 Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
             },
-            body: await serializers.ClanRequest.json(request),
+            body: await serializers.UpsertClanRequest.json(request),
         });
         if (_response.ok) {
             return await serializers.ClanResponse.parse(_response.body as serializers.ClanResponse.Raw);
         }
 
         if (_response.error.reason === "status-code") {
-            throw new errors.CodeCombatApiError({
+            throw new errors.CodeCombatError({
                 statusCode: _response.error.statusCode,
                 body: _response.error.body,
             });
@@ -47,14 +47,14 @@ export class Client {
 
         switch (_response.error.reason) {
             case "non-json":
-                throw new errors.CodeCombatApiError({
+                throw new errors.CodeCombatError({
                     statusCode: _response.error.statusCode,
                     body: _response.error.rawBody,
                 });
             case "timeout":
-                throw new errors.CodeCombatApiTimeoutError();
+                throw new errors.CodeCombatTimeoutError();
             case "unknown":
-                throw new errors.CodeCombatApiError({
+                throw new errors.CodeCombatError({
                     message: _response.error.errorMessage,
                 });
         }

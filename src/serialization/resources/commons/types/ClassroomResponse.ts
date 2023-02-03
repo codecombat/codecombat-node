@@ -3,24 +3,24 @@
  */
 
 import * as serializers from "../../..";
-import { CodeCombatApi } from "@fern-api/codecombat";
+import { CodeCombat } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
 export const ClassroomResponse: core.serialization.ObjectSchema<
     serializers.ClassroomResponse.Raw,
-    CodeCombatApi.ClassroomResponse
+    CodeCombat.ClassroomResponse
 > = core.serialization.object({
     id: core.serialization.property(
         "_id",
-        core.serialization.lazy(async () => (await import("../../..")).ObjectId).optional()
+        core.serialization.lazy(async () => (await import("../../..")).ObjectIdString).optional()
     ),
     name: core.serialization.string().optional(),
     members: core.serialization
-        .list(core.serialization.lazy(async () => (await import("../../..")).ObjectId))
+        .list(core.serialization.lazy(async () => (await import("../../..")).ObjectIdString))
         .optional(),
     ownerId: core.serialization.property(
         "ownerID",
-        core.serialization.lazy(async () => (await import("../../..")).ObjectId).optional()
+        core.serialization.lazy(async () => (await import("../../..")).ObjectIdString).optional()
     ),
     description: core.serialization.string().optional(),
     courses: core.serialization
@@ -30,10 +30,10 @@ export const ClassroomResponse: core.serialization.ObjectSchema<
 
 export declare namespace ClassroomResponse {
     interface Raw {
-        _id?: serializers.ObjectId.Raw | null;
+        _id?: serializers.ObjectIdString.Raw | null;
         name?: string | null;
-        members?: serializers.ObjectId.Raw[] | null;
-        ownerID?: serializers.ObjectId.Raw | null;
+        members?: serializers.ObjectIdString.Raw[] | null;
+        ownerID?: serializers.ObjectIdString.Raw | null;
         description?: string | null;
         courses?: serializers.Course.Raw[] | null;
     }

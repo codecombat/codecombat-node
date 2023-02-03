@@ -3,17 +3,17 @@
  */
 
 import * as serializers from "../../../..";
-import { CodeCombatApi } from "@fern-api/codecombat";
+import { CodeCombat } from "@fern-api/codecombat";
 import * as core from "../../../../../core";
 
 export const CreateClassroomRequest: core.serialization.Schema<
     serializers.CreateClassroomRequest.Raw,
-    CodeCombatApi.CreateClassroomRequest
+    CodeCombat.CreateClassroomRequest
 > = core.serialization.object({
     name: core.serialization.string(),
     ownerId: core.serialization.property(
         "ownerID",
-        core.serialization.lazy(async () => (await import("../../../..")).ObjectId)
+        core.serialization.lazy(async () => (await import("../../../..")).ObjectIdString)
     ),
     aceConfig: core.serialization.lazyObject(async () => (await import("../../../..")).AceConfig),
 });
@@ -21,7 +21,7 @@ export const CreateClassroomRequest: core.serialization.Schema<
 export declare namespace CreateClassroomRequest {
     interface Raw {
         name: string;
-        ownerID: serializers.ObjectId.Raw;
+        ownerID: serializers.ObjectIdString.Raw;
         aceConfig: serializers.AceConfig.Raw;
     }
 }

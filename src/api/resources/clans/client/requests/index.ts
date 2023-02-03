@@ -1,1 +1,1 @@
-export { ClanRequest } from "./ClanRequest";
+export { UpsertClanRequest } from "./UpsertClanRequest";

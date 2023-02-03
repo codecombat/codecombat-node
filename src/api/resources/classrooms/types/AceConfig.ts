@@ -3,5 +3,6 @@
  */
 
 export interface AceConfig {
+    /** Programming language for the classroom */
     language?: string;
 }

@@ -3,14 +3,14 @@
  */
 
 import * as serializers from "../../..";
-import { CodeCombatApi } from "@fern-api/codecombat";
+import { CodeCombat } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
-export const UserResponse: core.serialization.ObjectSchema<serializers.UserResponse.Raw, CodeCombatApi.UserResponse> =
+export const UserResponse: core.serialization.ObjectSchema<serializers.UserResponse.Raw, CodeCombat.UserResponse> =
     core.serialization.object({
         id: core.serialization.property(
             "_id",
-            core.serialization.lazy(async () => (await import("../../..")).ObjectId).optional()
+            core.serialization.lazy(async () => (await import("../../..")).ObjectIdString).optional()
         ),
         email: core.serialization.string().optional(),
         name: core.serialization.string().optional(),
@@ -18,7 +18,7 @@ export const UserResponse: core.serialization.ObjectSchema<serializers.UserRespo
         role: core.serialization.lazy(async () => (await import("../../..")).RoleString).optional(),
         stats: core.serialization.lazyObject(async () => (await import("../../..")).UserStats).optional(),
         oAuthIdentities: core.serialization
-            .list(core.serialization.lazyObject(async () => (await import("../../..")).OauthIdentity))
+            .list(core.serialization.lazyObject(async () => (await import("../../..")).AuthIdentity))
             .optional(),
         subscription: core.serialization.lazyObject(async () => (await import("../../..")).Subscription).optional(),
         license: core.serialization.lazyObject(async () => (await import("../../..")).License).optional(),
@@ -26,13 +26,13 @@ export const UserResponse: core.serialization.ObjectSchema<serializers.UserRespo
 
 export declare namespace UserResponse {
     interface Raw {
-        _id?: serializers.ObjectId.Raw | null;
+        _id?: serializers.ObjectIdString.Raw | null;
         email?: string | null;
         name?: string | null;
         slug?: string | null;
         role?: serializers.RoleString.Raw | null;
         stats?: serializers.UserStats.Raw | null;
-        oAuthIdentities?: serializers.OauthIdentity.Raw[] | null;
+        oAuthIdentities?: serializers.AuthIdentity.Raw[] | null;
         subscription?: serializers.Subscription.Raw | null;
         license?: serializers.License.Raw | null;
     }

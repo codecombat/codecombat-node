@@ -3,18 +3,18 @@
  */
 
 import * as serializers from "../../..";
-import { CodeCombatApi } from "@fern-api/codecombat";
+import { CodeCombat } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
-export const Subscription: core.serialization.ObjectSchema<serializers.Subscription.Raw, CodeCombatApi.Subscription> =
+export const Subscription: core.serialization.ObjectSchema<serializers.Subscription.Raw, CodeCombat.Subscription> =
     core.serialization.object({
-        ends: core.serialization.lazy(async () => (await import("../../..")).Datetime).optional(),
+        ends: core.serialization.lazy(async () => (await import("../../..")).DatetimeString).optional(),
         active: core.serialization.boolean().optional(),
     });
 
 export declare namespace Subscription {
     interface Raw {
-        ends?: serializers.Datetime.Raw | null;
+        ends?: serializers.DatetimeString.Raw | null;
         active?: boolean | null;
     }
 }

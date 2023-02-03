@@ -3,38 +3,40 @@
  */
 
 import * as serializers from "../../..";
-import { CodeCombatApi } from "@fern-api/codecombat";
+import { CodeCombat } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
-export const ClanResponse: core.serialization.ObjectSchema<serializers.ClanResponse.Raw, CodeCombatApi.ClanResponse> =
+export const ClanResponse: core.serialization.ObjectSchema<serializers.ClanResponse.Raw, CodeCombat.ClanResponse> =
     core.serialization.object({
         id: core.serialization.property(
             "_id",
-            core.serialization.lazy(async () => (await import("../../..")).ObjectId).optional()
+            core.serialization.lazy(async () => (await import("../../..")).ObjectIdString).optional()
         ),
         name: core.serialization.string().optional(),
         displayName: core.serialization.string().optional(),
         members: core.serialization
-            .list(core.serialization.lazy(async () => (await import("../../..")).ObjectId))
+            .list(core.serialization.lazy(async () => (await import("../../..")).ObjectIdString))
             .optional(),
         ownerId: core.serialization.property(
             "ownerID",
-            core.serialization.lazy(async () => (await import("../../..")).ObjectId).optional()
+            core.serialization.lazy(async () => (await import("../../..")).ObjectIdString).optional()
         ),
         description: core.serialization.string().optional(),
         type: core.serialization.string().optional(),
         kind: core.serialization.string().optional(),
+        metadata: core.serialization.record(core.serialization.string(), core.serialization.unknown()).optional(),
     });
 
 export declare namespace ClanResponse {
     interface Raw {
-        _id?: serializers.ObjectId.Raw | null;
+        _id?: serializers.ObjectIdString.Raw | null;
         name?: string | null;
         displayName?: string | null;
-        members?: serializers.ObjectId.Raw[] | null;
-        ownerID?: serializers.ObjectId.Raw | null;
+        members?: serializers.ObjectIdString.Raw[] | null;
+        ownerID?: serializers.ObjectIdString.Raw | null;
         description?: string | null;
         type?: string | null;
         kind?: string | null;
+        metadata?: Record<string, unknown> | null;
     }
 }

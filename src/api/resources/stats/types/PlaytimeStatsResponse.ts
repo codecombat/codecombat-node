@@ -3,6 +3,8 @@
  */
 
 export interface PlaytimeStatsResponse {
+    /** Total play time in seconds */
     playTime?: number;
+    /** Number of levels played */
     gamesPlayed?: number;
 }

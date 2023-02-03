@@ -3,8 +3,12 @@
  */
 
 export interface LicenseStatsResponse {
+    /** Total number of license days granted */
     licenseDaysGranted?: number;
+    /** Number of license days used */
     licenseDaysUsed?: number;
+    /** Number of license days remaining */
     licenseDaysRemaining?: number;
+    /** Number of active/valid licenses */
     activeLicenses?: number;
 }

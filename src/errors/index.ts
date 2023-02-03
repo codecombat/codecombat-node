@@ -1,2 +1,2 @@
-export { CodeCombatApiError } from "./CodeCombatApiError";
-export { CodeCombatApiTimeoutError } from "./CodeCombatApiTimeoutError";
+export { CodeCombatError } from "./CodeCombatError";
+export { CodeCombatTimeoutError } from "./CodeCombatTimeoutError";

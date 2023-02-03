@@ -1,7 +1,7 @@
-export { GetClassroomRequest } from "./GetClassroomRequest";
+export { GetClassroomDetailsRequest } from "./GetClassroomDetailsRequest";
 export { CreateClassroomRequest } from "./CreateClassroomRequest";
 export { UpsertClassroomRequest } from "./UpsertClassroomRequest";
-export { RemoveUserRequest } from "./RemoveUserRequest";
-export { EnrollUserRequest } from "./EnrollUserRequest";
-export { UnenrollUserRequest } from "./UnenrollUserRequest";
-export { ClassroomStatsRequest } from "./ClassroomStatsRequest";
+export { DeleteUserFromClassroomRequest } from "./DeleteUserFromClassroomRequest";
+export { EnrollUserInCourseRequest } from "./EnrollUserInCourseRequest";
+export { RemoveUserFromClassroomRequest } from "./RemoveUserFromClassroomRequest";
+export { GetMembersStatsRequest } from "./GetMembersStatsRequest";

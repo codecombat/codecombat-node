@@ -4,5 +4,7 @@
 
 export interface UserStats {
     gamesCompleted?: number;
+    concepts?: Record<string, number>;
+    /** Included only when specifically requested on the endpoint */
     playTime?: number;
 }

@@ -3,12 +3,12 @@
  */
 
 import * as serializers from "../../../..";
-import { CodeCombatApi } from "@fern-api/codecombat";
+import { CodeCombat } from "@fern-api/codecombat";
 import * as core from "../../../../../core";
 
 export const UpsertClassroomRequest: core.serialization.Schema<
     serializers.UpsertClassroomRequest.Raw,
-    CodeCombatApi.UpsertClassroomRequest
+    CodeCombat.UpsertClassroomRequest
 > = core.serialization.object({
     code: core.serialization.string(),
     userId: core.serialization.string(),

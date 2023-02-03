@@ -3,18 +3,20 @@
  */
 
 import * as serializers from "../../..";
-import { CodeCombatApi } from "@fern-api/codecombat";
+import { CodeCombat } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
-export const UserStats: core.serialization.ObjectSchema<serializers.UserStats.Raw, CodeCombatApi.UserStats> =
+export const UserStats: core.serialization.ObjectSchema<serializers.UserStats.Raw, CodeCombat.UserStats> =
     core.serialization.object({
         gamesCompleted: core.serialization.number().optional(),
+        concepts: core.serialization.record(core.serialization.string(), core.serialization.number()).optional(),
         playTime: core.serialization.number().optional(),
     });
 
 export declare namespace UserStats {
     interface Raw {
         gamesCompleted?: number | null;
+        concepts?: Record<string, number> | null;
         playTime?: number | null;
     }
 }

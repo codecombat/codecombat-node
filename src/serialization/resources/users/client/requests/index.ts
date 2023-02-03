@@ -1,5 +1,9 @@
 export { CreateUserRequest } from "./CreateUserRequest";
-export { ModifyUserRequest } from "./ModifyUserRequest";
-export { SetHeroRequest } from "./SetHeroRequest";
-export { SetAceConfigRequest } from "./SetAceConfigRequest";
-export { AddOauth2IdentityRequest } from "./AddOauth2IdentityRequest";
+export { UpdateUserRequest } from "./UpdateUserRequest";
+export { GetHeroRequest } from "./GetHeroRequest";
+export { SetAceConfig } from "./SetAceConfig";
+export { AddOAuthIdentityRequest } from "./AddOAuthIdentityRequest";
+export { UpdateSubscriptionRequest } from "./UpdateSubscriptionRequest";
+export { ShortenSubscriptionRequest } from "./ShortenSubscriptionRequest";
+export { GrantLicenseRequest } from "./GrantLicenseRequest";
+export { ShortenLicenseRequest } from "./ShortenLicenseRequest";

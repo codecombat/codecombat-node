@@ -3,30 +3,32 @@
  */
 
 import * as serializers from "../../..";
-import { CodeCombatApi } from "@fern-api/codecombat";
+import { CodeCombat } from "@fern-api/codecombat";
 import * as core from "../../../../core";
 
-export const Course: core.serialization.ObjectSchema<serializers.Course.Raw, CodeCombatApi.Course> =
+export const Course: core.serialization.ObjectSchema<serializers.Course.Raw, CodeCombat.Course> =
     core.serialization.object({
         id: core.serialization.property(
             "_id",
-            core.serialization.lazy(async () => (await import("../../..")).ObjectId).optional()
+            core.serialization.lazy(async () => (await import("../../..")).ObjectIdString).optional()
         ),
-        levels: core.serialization.list(core.serialization.unknown()).optional(),
+        levels: core.serialization
+            .list(core.serialization.record(core.serialization.string(), core.serialization.unknown()))
+            .optional(),
         enrolled: core.serialization
-            .list(core.serialization.lazy(async () => (await import("../../..")).ObjectId))
+            .list(core.serialization.lazy(async () => (await import("../../..")).ObjectIdString))
             .optional(),
         instanceId: core.serialization.property(
             "instance_id",
-            core.serialization.lazy(async () => (await import("../../..")).ObjectId).optional()
+            core.serialization.lazy(async () => (await import("../../..")).ObjectIdString).optional()
         ),
     });
 
 export declare namespace Course {
     interface Raw {
-        _id?: serializers.ObjectId.Raw | null;
-        levels?: unknown[] | null;
-        enrolled?: serializers.ObjectId.Raw[] | null;
-        instance_id?: serializers.ObjectId.Raw | null;
+        _id?: serializers.ObjectIdString.Raw | null;
+        levels?: Record<string, unknown>[] | null;
+        enrolled?: serializers.ObjectIdString.Raw[] | null;
+        instance_id?: serializers.ObjectIdString.Raw | null;
     }
 }
