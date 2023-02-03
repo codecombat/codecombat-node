@@ -1,6 +1,6 @@
 {
     "name": "@fern-api/codecombat",
-    "version": "0.0.10",
+    "version": "0.0.11",
     "repository": "https://github.com/codecombat/codecombat-node",
     "files": [
         "dist",
