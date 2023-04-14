@@ -7,6 +7,7 @@ import { CodeCombat } from "@fern-api/codecombat";
 export interface CreateUserRequest {
     name: string;
     email: string;
+    /** A `"student"` or `"teacher"`. If unset, a home user will be created, unable to join classrooms. */
     role?: CodeCombat.UserRole;
     preferredLanguage?: string;
     heroConfig?: CodeCombat.HeroConfig;

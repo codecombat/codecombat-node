@@ -5,19 +5,20 @@
 import * as environments from "../../../../environments";
 import * as core from "../../../../core";
 import { CodeCombat } from "@fern-api/codecombat";
+import URLSearchParams from "@ungap/url-search-params";
 import urlJoin from "url-join";
 import * as serializers from "../../../../serialization";
 import * as errors from "../../../../errors";
 
-export declare namespace Client {
+export declare namespace Stats {
     interface Options {
         environment?: environments.CodeCombatEnvironment | string;
-        credentials?: core.Supplier<core.BasicAuth>;
+        credentials: core.Supplier<core.BasicAuth>;
     }
 }
 
-export class Client {
-    constructor(private readonly options: Client.Options) {}
+export class Stats {
+    constructor(private readonly options: Stats.Options) {}
 
     /**
      * Returns the playtime stats
@@ -43,14 +44,17 @@ export class Client {
             url: urlJoin(this.options.environment ?? environments.CodeCombatEnvironment.Production, "/playtime-stats"),
             method: "GET",
             headers: {
-                Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
+                Authorization: await this._getAuthorizationHeader(),
             },
+            contentType: "application/json",
             queryParameters: _queryParams,
         });
         if (_response.ok) {
-            return await serializers.PlaytimeStatsResponse.parse(
-                _response.body as serializers.PlaytimeStatsResponse.Raw
-            );
+            return await serializers.PlaytimeStatsResponse.parseOrThrow(_response.body, {
+                unrecognizedObjectKeys: "passthrough",
+                allowUnrecognizedUnionMembers: true,
+                allowUnrecognizedEnumValues: true,
+            });
         }
 
         if (_response.error.reason === "status-code") {
@@ -83,11 +87,16 @@ export class Client {
             url: urlJoin(this.options.environment ?? environments.CodeCombatEnvironment.Production, "/license-stats"),
             method: "GET",
             headers: {
-                Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
+                Authorization: await this._getAuthorizationHeader(),
             },
+            contentType: "application/json",
         });
         if (_response.ok) {
-            return await serializers.LicenseStatsResponse.parse(_response.body as serializers.LicenseStatsResponse.Raw);
+            return await serializers.LicenseStatsResponse.parseOrThrow(_response.body, {
+                unrecognizedObjectKeys: "passthrough",
+                allowUnrecognizedUnionMembers: true,
+                allowUnrecognizedEnumValues: true,
+            });
         }
 
         if (_response.error.reason === "status-code") {
@@ -110,5 +119,14 @@ export class Client {
                     message: _response.error.errorMessage,
                 });
         }
+    }
+
+    private async _getAuthorizationHeader() {
+        const bearer = await core.Supplier.get(this.options.credentials);
+        if (credentials != null) {
+            return core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(credentials));
+        }
+
+        return undefined;
     }
 }

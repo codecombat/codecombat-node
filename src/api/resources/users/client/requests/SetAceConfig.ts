@@ -3,7 +3,10 @@
  */
 
 export interface SetAceConfig {
+    /** controls whether autocompletion snippets show up, the default value is true */
     liveCompletion?: boolean;
+    /** controls whether things like automatic parenthesis and quote completion happens, the default value is false */
     behaviors?: boolean;
+    /** only for home users, should be one of ["python", "javascript", "cpp", "lua", "coffeescript"] right now */
     language?: string;
 }

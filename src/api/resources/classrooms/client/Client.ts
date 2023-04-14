@@ -5,19 +5,20 @@
 import * as environments from "../../../../environments";
 import * as core from "../../../../core";
 import { CodeCombat } from "@fern-api/codecombat";
+import URLSearchParams from "@ungap/url-search-params";
 import urlJoin from "url-join";
 import * as serializers from "../../../../serialization";
 import * as errors from "../../../../errors";
 
-export declare namespace Client {
+export declare namespace Classrooms {
     interface Options {
         environment?: environments.CodeCombatEnvironment | string;
-        credentials?: core.Supplier<core.BasicAuth>;
+        credentials: core.Supplier<core.BasicAuth>;
     }
 }
 
-export class Client {
-    constructor(private readonly options: Client.Options) {}
+export class Classrooms {
+    constructor(private readonly options: Classrooms.Options) {}
 
     /**
      * Returns the classroom details for a class code.
@@ -34,14 +35,17 @@ export class Client {
             url: urlJoin(this.options.environment ?? environments.CodeCombatEnvironment.Production, "/classrooms"),
             method: "GET",
             headers: {
-                Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
+                Authorization: await this._getAuthorizationHeader(),
             },
+            contentType: "application/json",
             queryParameters: _queryParams,
         });
         if (_response.ok) {
-            return await serializers.ClassroomResponseWithCode.parse(
-                _response.body as serializers.ClassroomResponseWithCode.Raw
-            );
+            return await serializers.ClassroomResponseWithCode.parseOrThrow(_response.body, {
+                unrecognizedObjectKeys: "passthrough",
+                allowUnrecognizedUnionMembers: true,
+                allowUnrecognizedEnumValues: true,
+            });
         }
 
         if (_response.error.reason === "status-code") {
@@ -74,9 +78,10 @@ export class Client {
             url: urlJoin(this.options.environment ?? environments.CodeCombatEnvironment.Production, "/classrooms"),
             method: "POST",
             headers: {
-                Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
+                Authorization: await this._getAuthorizationHeader(),
             },
-            body: await serializers.CreateClassroomRequest.json(request),
+            contentType: "application/json",
+            body: await serializers.CreateClassroomRequest.jsonOrThrow(request, { unrecognizedObjectKeys: "strip" }),
         });
         if (_response.ok) {
             return;
@@ -118,12 +123,17 @@ export class Client {
             ),
             method: "PUT",
             headers: {
-                Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
+                Authorization: await this._getAuthorizationHeader(),
             },
-            body: await serializers.UpsertClassroomRequest.json(request),
+            contentType: "application/json",
+            body: await serializers.UpsertClassroomRequest.jsonOrThrow(request, { unrecognizedObjectKeys: "strip" }),
         });
         if (_response.ok) {
-            return await serializers.ClassroomResponse.parse(_response.body as serializers.ClassroomResponse.Raw);
+            return await serializers.ClassroomResponse.parseOrThrow(_response.body, {
+                unrecognizedObjectKeys: "passthrough",
+                allowUnrecognizedUnionMembers: true,
+                allowUnrecognizedEnumValues: true,
+            });
         }
 
         if (_response.error.reason === "status-code") {
@@ -162,12 +172,19 @@ export class Client {
             ),
             method: "DELETE",
             headers: {
-                Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
+                Authorization: await this._getAuthorizationHeader(),
             },
-            body: await serializers.DeleteUserFromClassroomRequest.json(request),
+            contentType: "application/json",
+            body: await serializers.DeleteUserFromClassroomRequest.jsonOrThrow(request, {
+                unrecognizedObjectKeys: "strip",
+            }),
         });
         if (_response.ok) {
-            return await serializers.ClassroomResponse.parse(_response.body as serializers.ClassroomResponse.Raw);
+            return await serializers.ClassroomResponse.parseOrThrow(_response.body, {
+                unrecognizedObjectKeys: "passthrough",
+                allowUnrecognizedUnionMembers: true,
+                allowUnrecognizedEnumValues: true,
+            });
         }
 
         if (_response.error.reason === "status-code") {
@@ -216,13 +233,18 @@ export class Client {
             ),
             method: "PUT",
             headers: {
-                Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
+                Authorization: await this._getAuthorizationHeader(),
             },
+            contentType: "application/json",
             queryParameters: _queryParams,
-            body: await serializers.EnrollUserInCourseRequest.json(_body),
+            body: await serializers.EnrollUserInCourseRequest.jsonOrThrow(_body, { unrecognizedObjectKeys: "strip" }),
         });
         if (_response.ok) {
-            return await serializers.ClassroomResponse.parse(_response.body as serializers.ClassroomResponse.Raw);
+            return await serializers.ClassroomResponse.parseOrThrow(_response.body, {
+                unrecognizedObjectKeys: "passthrough",
+                allowUnrecognizedUnionMembers: true,
+                allowUnrecognizedEnumValues: true,
+            });
         }
 
         if (_response.error.reason === "status-code") {
@@ -269,13 +291,20 @@ export class Client {
             ),
             method: "PUT",
             headers: {
-                Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
+                Authorization: await this._getAuthorizationHeader(),
             },
+            contentType: "application/json",
             queryParameters: _queryParams,
-            body: await serializers.RemoveUserFromClassroomRequest.json(_body),
+            body: await serializers.RemoveUserFromClassroomRequest.jsonOrThrow(_body, {
+                unrecognizedObjectKeys: "strip",
+            }),
         });
         if (_response.ok) {
-            return await serializers.ClassroomResponse.parse(_response.body as serializers.ClassroomResponse.Raw);
+            return await serializers.ClassroomResponse.parseOrThrow(_response.body, {
+                unrecognizedObjectKeys: "passthrough",
+                allowUnrecognizedUnionMembers: true,
+                allowUnrecognizedEnumValues: true,
+            });
         }
 
         if (_response.error.reason === "status-code") {
@@ -329,14 +358,17 @@ export class Client {
             ),
             method: "GET",
             headers: {
-                Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
+                Authorization: await this._getAuthorizationHeader(),
             },
+            contentType: "application/json",
             queryParameters: _queryParams,
         });
         if (_response.ok) {
-            return await serializers.classrooms.getMembersStats.Response.parse(
-                _response.body as serializers.classrooms.getMembersStats.Response.Raw
-            );
+            return await serializers.classrooms.getMembersStats.Response.parseOrThrow(_response.body, {
+                unrecognizedObjectKeys: "passthrough",
+                allowUnrecognizedUnionMembers: true,
+                allowUnrecognizedEnumValues: true,
+            });
         }
 
         if (_response.error.reason === "status-code") {
@@ -376,13 +408,16 @@ export class Client {
             ),
             method: "GET",
             headers: {
-                Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
+                Authorization: await this._getAuthorizationHeader(),
             },
+            contentType: "application/json",
         });
         if (_response.ok) {
-            return await serializers.classrooms.getLevelSession.Response.parse(
-                _response.body as serializers.classrooms.getLevelSession.Response.Raw
-            );
+            return await serializers.classrooms.getLevelSession.Response.parseOrThrow(_response.body, {
+                unrecognizedObjectKeys: "passthrough",
+                allowUnrecognizedUnionMembers: true,
+                allowUnrecognizedEnumValues: true,
+            });
         }
 
         if (_response.error.reason === "status-code") {
@@ -405,5 +440,14 @@ export class Client {
                     message: _response.error.errorMessage,
                 });
         }
+    }
+
+    private async _getAuthorizationHeader() {
+        const bearer = await core.Supplier.get(this.options.credentials);
+        if (credentials != null) {
+            return core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(credentials));
+        }
+
+        return undefined;
     }
 }

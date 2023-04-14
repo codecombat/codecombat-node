@@ -9,15 +9,15 @@ import urlJoin from "url-join";
 import * as serializers from "../../../../serialization";
 import * as errors from "../../../../errors";
 
-export declare namespace Client {
+export declare namespace Clans {
     interface Options {
         environment?: environments.CodeCombatEnvironment | string;
-        credentials?: core.Supplier<core.BasicAuth>;
+        credentials: core.Supplier<core.BasicAuth>;
     }
 }
 
-export class Client {
-    constructor(private readonly options: Client.Options) {}
+export class Clans {
+    constructor(private readonly options: Clans.Options) {}
 
     /**
      * Upserts a user into the clan.
@@ -26,16 +26,21 @@ export class Client {
         const _response = await core.fetcher({
             url: urlJoin(
                 this.options.environment ?? environments.CodeCombatEnvironment.Production,
-                `/clan/${handle}/members/`
+                `/clan/${handle}/members`
             ),
             method: "PUT",
             headers: {
-                Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
+                Authorization: await this._getAuthorizationHeader(),
             },
-            body: await serializers.UpsertClanRequest.json(request),
+            contentType: "application/json",
+            body: await serializers.UpsertClanRequest.jsonOrThrow(request, { unrecognizedObjectKeys: "strip" }),
         });
         if (_response.ok) {
-            return await serializers.ClanResponse.parse(_response.body as serializers.ClanResponse.Raw);
+            return await serializers.ClanResponse.parseOrThrow(_response.body, {
+                unrecognizedObjectKeys: "passthrough",
+                allowUnrecognizedUnionMembers: true,
+                allowUnrecognizedEnumValues: true,
+            });
         }
 
         if (_response.error.reason === "status-code") {
@@ -58,5 +63,14 @@ export class Client {
                     message: _response.error.errorMessage,
                 });
         }
+    }
+
+    private async _getAuthorizationHeader() {
+        const bearer = await core.Supplier.get(this.options.credentials);
+        if (credentials != null) {
+            return core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(credentials));
+        }
+
+        return undefined;
     }
 }

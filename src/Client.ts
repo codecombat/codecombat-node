@@ -4,49 +4,49 @@
 
 import * as environments from "./environments";
 import * as core from "./core";
-import { Client as AuthClient } from "./api/resources/auth/client/Client";
-import { Client as ClansClient } from "./api/resources/clans/client/Client";
-import { Client as ClassroomsClient } from "./api/resources/classrooms/client/Client";
-import { Client as StatsClient } from "./api/resources/stats/client/Client";
-import { Client as UsersClient } from "./api/resources/users/client/Client";
+import { Auth } from "./api/resources/auth/client/Client";
+import { Clans } from "./api/resources/clans/client/Client";
+import { Classrooms } from "./api/resources/classrooms/client/Client";
+import { Stats } from "./api/resources/stats/client/Client";
+import { Users } from "./api/resources/users/client/Client";
 
 export declare namespace CodeCombatClient {
     interface Options {
         environment?: environments.CodeCombatEnvironment | string;
-        credentials?: core.Supplier<core.BasicAuth>;
+        credentials: core.Supplier<core.BasicAuth>;
     }
 }
 
 export class CodeCombatClient {
     constructor(private readonly options: CodeCombatClient.Options) {}
 
-    #auth: AuthClient | undefined;
+    private _auth: Auth | undefined;
 
-    public get auth(): AuthClient {
-        return (this.#auth ??= new AuthClient(this.options));
+    public get auth(): Auth {
+        return (this._auth ??= new Auth(this.options));
     }
 
-    #clans: ClansClient | undefined;
+    private _clans: Clans | undefined;
 
-    public get clans(): ClansClient {
-        return (this.#clans ??= new ClansClient(this.options));
+    public get clans(): Clans {
+        return (this._clans ??= new Clans(this.options));
     }
 
-    #classrooms: ClassroomsClient | undefined;
+    private _classrooms: Classrooms | undefined;
 
-    public get classrooms(): ClassroomsClient {
-        return (this.#classrooms ??= new ClassroomsClient(this.options));
+    public get classrooms(): Classrooms {
+        return (this._classrooms ??= new Classrooms(this.options));
     }
 
-    #stats: StatsClient | undefined;
+    private _stats: Stats | undefined;
 
-    public get stats(): StatsClient {
-        return (this.#stats ??= new StatsClient(this.options));
+    public get stats(): Stats {
+        return (this._stats ??= new Stats(this.options));
     }
 
-    #users: UsersClient | undefined;
+    private _users: Users | undefined;
 
-    public get users(): UsersClient {
-        return (this.#users ??= new UsersClient(this.options));
+    public get users(): Users {
+        return (this._users ??= new Users(this.options));
     }
 }

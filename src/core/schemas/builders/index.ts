@@ -1,6 +1,5 @@
 export * from "./date";
 export * from "./enum";
-export * from "./identity";
 export * from "./lazy";
 export * from "./list";
 export * from "./literals";
@@ -10,4 +9,5 @@ export * from "./primitives";
 export * from "./record";
 export * from "./schema-utils";
 export * from "./set";
+export * from "./undiscriminated-union";
 export * from "./union";

@@ -3,6 +3,8 @@
  */
 
 export interface UpdateUserRequest {
+    /** Set to new name string */
     name: string;
+    /** Set the birthday */
     birthday?: string;
 }

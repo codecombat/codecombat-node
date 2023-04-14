@@ -3,5 +3,6 @@
  */
 
 export interface UpsertClanRequest {
+    /** The `_id` or `slug` of the user to add to the clan. */
     userId: string;
 }

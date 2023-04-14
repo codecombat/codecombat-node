@@ -3,6 +3,8 @@
  */
 
 export interface DeleteUserFromClassroomRequest {
+    /** The `_id` or `slug` of the user to remove from the class. */
     userId: string;
+    /** limit the return number of members for the classroom, the default value is 1000 */
     retMemberLimit?: number;
 }

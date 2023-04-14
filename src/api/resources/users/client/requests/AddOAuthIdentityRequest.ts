@@ -3,7 +3,10 @@
  */
 
 export interface AddOAuthIdentityRequest {
+    /** Your OAuth Provider ID. */
     provider: string;
+    /** Will be passed through your lookup URL to get the user ID. Required if no `code`. */
     accessToken?: string;
+    /** Will be passed to the OAuth token endpoint to get a token. Required if no `accessToken`. */
     code?: string;
 }

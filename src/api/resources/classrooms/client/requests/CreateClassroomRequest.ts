@@ -5,6 +5,7 @@
 import { CodeCombat } from "@fern-api/codecombat";
 
 export interface CreateClassroomRequest {
+    /** Name of the classroom */
     name: string;
     ownerId: CodeCombat.ObjectIdString;
     aceConfig: CodeCombat.AceConfig;

@@ -5,18 +5,19 @@
 import * as environments from "../../../../environments";
 import * as core from "../../../../core";
 import { CodeCombat } from "@fern-api/codecombat";
+import URLSearchParams from "@ungap/url-search-params";
 import urlJoin from "url-join";
 import * as errors from "../../../../errors";
 
-export declare namespace Client {
+export declare namespace Auth {
     interface Options {
         environment?: environments.CodeCombatEnvironment | string;
-        credentials?: core.Supplier<core.BasicAuth>;
+        credentials: core.Supplier<core.BasicAuth>;
     }
 }
 
-export class Client {
-    constructor(private readonly options: Client.Options) {}
+export class Auth {
+    constructor(private readonly options: Auth.Options) {}
 
     /**
      * Logs a [user](#users) in. #### Example ```javascript url = `https://codecombat.com/auth/login-o-auth?provider=${OAUTH_PROVIDER_ID}&accessToken=1234` res.redirect(url) // User is sent to this CodeCombat URL and assuming everything checks out,  // is logged in and redirected to the home page. ``` In this example, we call your lookup URL (let's say, `https://oauth.provider/user?t=<%= accessToken %>`) with the access token (`1234`). The lookup URL returns `{ id: 'abcd' }` in this case. We will match this `id` with the OAuthIdentity stored in the user information in our db. If everything checks out, the user is logged in and redirected to the home page.
@@ -49,8 +50,9 @@ export class Client {
             ),
             method: "GET",
             headers: {
-                Authorization: core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(this.options.credentials)),
+                Authorization: await this._getAuthorizationHeader(),
             },
+            contentType: "application/json",
             queryParameters: _queryParams,
         });
         if (_response.ok) {
@@ -77,5 +79,14 @@ export class Client {
                     message: _response.error.errorMessage,
                 });
         }
+    }
+
+    private async _getAuthorizationHeader() {
+        const bearer = await core.Supplier.get(this.options.credentials);
+        if (credentials != null) {
+            return core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(credentials));
+        }
+
+        return undefined;
     }
 }
