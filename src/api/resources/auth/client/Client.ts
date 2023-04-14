@@ -82,7 +82,7 @@ export class Auth {
     }
 
     private async _getAuthorizationHeader() {
-        const bearer = await core.Supplier.get(this.options.credentials);
+        const credentials = await core.Supplier.get(this.options.credentials);
         if (credentials != null) {
             return core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(credentials));
         }
