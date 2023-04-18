@@ -1,6 +1,6 @@
 {
     "name": "@fern-api/codecombat",
-    "version": "0.0.17",
+    "version": "0.0.18",
     "private": false,
     "repository": "https://github.com/codecombat/codecombat-node",
     "main": "./index.js",
