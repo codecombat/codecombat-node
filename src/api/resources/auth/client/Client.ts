@@ -4,26 +4,34 @@
 
 import * as environments from "../../../../environments";
 import * as core from "../../../../core";
-import { CodeCombat } from "@fern-api/codecombat";
-import URLSearchParams from "@ungap/url-search-params";
+import * as CodeCombat from "../../..";
+import { default as URLSearchParams } from "@ungap/url-search-params";
 import urlJoin from "url-join";
 import * as errors from "../../../../errors";
 
 export declare namespace Auth {
     interface Options {
-        environment?: environments.CodeCombatEnvironment | string;
-        credentials: core.Supplier<core.BasicAuth>;
+        environment?: core.Supplier<environments.CodeCombatEnvironment | string>;
+        username: core.Supplier<string>;
+        password: core.Supplier<string>;
+    }
+
+    interface RequestOptions {
+        timeoutInSeconds?: number;
     }
 }
 
 export class Auth {
-    constructor(private readonly options: Auth.Options) {}
+    constructor(protected readonly _options: Auth.Options) {}
 
     /**
-     * Logs a [user](#users) in. #### Example ```javascript url = `https://codecombat.com/auth/login-o-auth?provider=${OAUTH_PROVIDER_ID}&accessToken=1234` res.redirect(url) // User is sent to this CodeCombat URL and assuming everything checks out,  // is logged in and redirected to the home page. ``` In this example, we call your lookup URL (let's say, `https://oauth.provider/user?t=<%= accessToken %>`) with the access token (`1234`). The lookup URL returns `{ id: 'abcd' }` in this case. We will match this `id` with the OAuthIdentity stored in the user information in our db. If everything checks out, the user is logged in and redirected to the home page.
+     * Logs a user in. In this example, we call your lookup URL (let's say, `https://oauth.provider/user?t=<%= accessToken %>`) with the access token (`1234`). The lookup URL returns `{ id: 'abcd' }` in this case. We will match this `id` with the OAuthIdentity stored in the user information in our db. If everything checks out, the user is logged in and redirected to the home page.
      *
      */
-    public async get(request: CodeCombat.GetUserAuthRequest): Promise<void> {
+    public async loginOauth(
+        request: CodeCombat.LoginOauthRequest,
+        requestOptions?: Auth.RequestOptions
+    ): Promise<void> {
         const { provider, accessToken, code, redirect, errorRedirect } = request;
         const _queryParams = new URLSearchParams();
         _queryParams.append("provider", provider);
@@ -45,15 +53,19 @@ export class Auth {
 
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodeCombatEnvironment.Production,
-                "/auth/login-o-auth"
+                (await core.Supplier.get(this._options.environment)) ?? environments.CodeCombatEnvironment.Default,
+                "auth/login-o-auth"
             ),
             method: "GET",
             headers: {
                 Authorization: await this._getAuthorizationHeader(),
+                "X-Fern-Language": "JavaScript",
+                "X-Fern-SDK-Name": "@fern-api/codecombat",
+                "X-Fern-SDK-Version": "0.1.6",
             },
             contentType: "application/json",
             queryParameters: _queryParams,
+            timeoutMs: requestOptions?.timeoutInSeconds != null ? requestOptions.timeoutInSeconds * 1000 : 60000,
         });
         if (_response.ok) {
             return;
@@ -81,12 +93,10 @@ export class Auth {
         }
     }
 
-    private async _getAuthorizationHeader() {
-        const credentials = await core.Supplier.get(this.options.credentials);
-        if (credentials != null) {
-            return core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(credentials));
-        }
-
-        return undefined;
+    protected async _getAuthorizationHeader() {
+        return core.BasicAuth.toAuthorizationHeader({
+            username: await core.Supplier.get(this._options.username),
+            password: await core.Supplier.get(this._options.password),
+        });
     }
 }

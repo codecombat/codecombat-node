@@ -3,14 +3,16 @@
  */
 
 import * as serializers from "../../..";
-import { CodeCombat } from "@fern-api/codecombat";
+import * as CodeCombat from "../../../../api";
 import * as core from "../../../../core";
 
 export const Response: core.serialization.Schema<
     serializers.classrooms.getMembersStats.Response.Raw,
-    CodeCombat.MemberStat[]
-> = core.serialization.list(core.serialization.lazyObject(async () => (await import("../../..")).MemberStat));
+    CodeCombat.ClassroomsGetMembersStatsResponseItem[]
+> = core.serialization.list(
+    core.serialization.lazyObject(async () => (await import("../../..")).ClassroomsGetMembersStatsResponseItem)
+);
 
 export declare namespace Response {
-    type Raw = serializers.MemberStat.Raw[];
+    type Raw = serializers.ClassroomsGetMembersStatsResponseItem.Raw[];
 }
