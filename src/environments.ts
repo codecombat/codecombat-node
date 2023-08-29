@@ -3,7 +3,7 @@
  */
 
 export const CodeCombatEnvironment = {
-    Production: "https://codecombat.com/api",
+    Default: "https://codecombat.com/api",
 } as const;
 
-export type CodeCombatEnvironment = typeof CodeCombatEnvironment.Production;
+export type CodeCombatEnvironment = typeof CodeCombatEnvironment.Default;

@@ -1,1 +1,1 @@
-export { GetUserAuthRequest } from "./GetUserAuthRequest";
+export { LoginOauthRequest } from "./LoginOauthRequest";

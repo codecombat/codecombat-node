@@ -3,7 +3,7 @@
  */
 
 import * as serializers from "../../..";
-import { CodeCombat } from "@fern-api/codecombat";
+import * as CodeCombat from "../../../../api";
 import * as core from "../../../../core";
 
 export const Response: core.serialization.Schema<
