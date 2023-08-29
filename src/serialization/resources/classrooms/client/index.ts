@@ -1,3 +1,3 @@
 export * as getMembersStats from "./getMembersStats";
-export * as getLevelSession from "./getLevelSession";
+export * as getLevelsPlayed from "./getLevelsPlayed";
 export * from "./requests";

@@ -2,7 +2,7 @@
     "compilerOptions": {
         "extendedDiagnostics": true,
         "strict": true,
-        "target": "esnext",
+        "target": "ES6",
         "module": "CommonJS",
         "moduleResolution": "node",
         "esModuleInterop": true,
@@ -11,12 +11,7 @@
         "noUnusedParameters": true,
         "outDir": "dist",
         "rootDir": "src",
-        "baseUrl": "src",
-        "paths": {
-            "@fern-api/codecombat": [
-                "."
-            ]
-        }
+        "baseUrl": "src"
     },
     "include": [
         "src"
