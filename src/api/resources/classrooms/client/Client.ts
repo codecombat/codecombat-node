@@ -4,26 +4,34 @@
 
 import * as environments from "../../../../environments";
 import * as core from "../../../../core";
-import { CodeCombat } from "@fern-api/codecombat";
-import URLSearchParams from "@ungap/url-search-params";
+import * as CodeCombat from "../../..";
+import { default as URLSearchParams } from "@ungap/url-search-params";
 import urlJoin from "url-join";
 import * as serializers from "../../../../serialization";
 import * as errors from "../../../../errors";
 
 export declare namespace Classrooms {
     interface Options {
-        environment?: environments.CodeCombatEnvironment | string;
-        credentials: core.Supplier<core.BasicAuth>;
+        environment?: core.Supplier<environments.CodeCombatEnvironment | string>;
+        username: core.Supplier<string>;
+        password: core.Supplier<string>;
+    }
+
+    interface RequestOptions {
+        timeoutInSeconds?: number;
     }
 }
 
 export class Classrooms {
-    constructor(private readonly options: Classrooms.Options) {}
+    constructor(protected readonly _options: Classrooms.Options) {}
 
     /**
      * Returns the classroom details for a class code.
      */
-    public async get(request: CodeCombat.GetClassroomDetailsRequest): Promise<CodeCombat.ClassroomResponseWithCode> {
+    public async get(
+        request: CodeCombat.ClassroomsGetRequest,
+        requestOptions?: Classrooms.RequestOptions
+    ): Promise<CodeCombat.ClassroomResponseWithCode> {
         const { code, retMemberLimit } = request;
         const _queryParams = new URLSearchParams();
         _queryParams.append("code", code);
@@ -32,19 +40,27 @@ export class Classrooms {
         }
 
         const _response = await core.fetcher({
-            url: urlJoin(this.options.environment ?? environments.CodeCombatEnvironment.Production, "/classrooms"),
+            url: urlJoin(
+                (await core.Supplier.get(this._options.environment)) ?? environments.CodeCombatEnvironment.Default,
+                "classrooms"
+            ),
             method: "GET",
             headers: {
                 Authorization: await this._getAuthorizationHeader(),
+                "X-Fern-Language": "JavaScript",
+                "X-Fern-SDK-Name": "@fern-api/codecombat",
+                "X-Fern-SDK-Version": "0.1.7",
             },
             contentType: "application/json",
             queryParameters: _queryParams,
+            timeoutMs: requestOptions?.timeoutInSeconds != null ? requestOptions.timeoutInSeconds * 1000 : 60000,
         });
         if (_response.ok) {
             return await serializers.ClassroomResponseWithCode.parseOrThrow(_response.body, {
                 unrecognizedObjectKeys: "passthrough",
                 allowUnrecognizedUnionMembers: true,
                 allowUnrecognizedEnumValues: true,
+                breadcrumbsPrefix: ["response"],
             });
         }
 
@@ -73,18 +89,33 @@ export class Classrooms {
     /**
      * Creates a new empty `Classroom`.
      */
-    public async create(request: CodeCombat.CreateClassroomRequest): Promise<void> {
+    public async create(
+        request: CodeCombat.ClassroomsCreateRequest,
+        requestOptions?: Classrooms.RequestOptions
+    ): Promise<CodeCombat.ClassroomResponseWithCode> {
         const _response = await core.fetcher({
-            url: urlJoin(this.options.environment ?? environments.CodeCombatEnvironment.Production, "/classrooms"),
+            url: urlJoin(
+                (await core.Supplier.get(this._options.environment)) ?? environments.CodeCombatEnvironment.Default,
+                "classrooms"
+            ),
             method: "POST",
             headers: {
                 Authorization: await this._getAuthorizationHeader(),
+                "X-Fern-Language": "JavaScript",
+                "X-Fern-SDK-Name": "@fern-api/codecombat",
+                "X-Fern-SDK-Version": "0.1.7",
             },
             contentType: "application/json",
-            body: await serializers.CreateClassroomRequest.jsonOrThrow(request, { unrecognizedObjectKeys: "strip" }),
+            body: await serializers.ClassroomsCreateRequest.jsonOrThrow(request, { unrecognizedObjectKeys: "strip" }),
+            timeoutMs: requestOptions?.timeoutInSeconds != null ? requestOptions.timeoutInSeconds * 1000 : 60000,
         });
         if (_response.ok) {
-            return;
+            return await serializers.ClassroomResponseWithCode.parseOrThrow(_response.body, {
+                unrecognizedObjectKeys: "passthrough",
+                allowUnrecognizedUnionMembers: true,
+                allowUnrecognizedEnumValues: true,
+                breadcrumbsPrefix: ["response"],
+            });
         }
 
         if (_response.error.reason === "status-code") {
@@ -112,27 +143,35 @@ export class Classrooms {
     /**
      * Upserts a user into the classroom.
      */
-    public async upsertFromClassroom(
+    public async upsertMember(
         handle: string,
-        request: CodeCombat.UpsertClassroomRequest
+        request: CodeCombat.ClassroomsUpsertMemberRequest,
+        requestOptions?: Classrooms.RequestOptions
     ): Promise<CodeCombat.ClassroomResponse> {
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodeCombatEnvironment.Production,
-                `/classrooms/${handle}/members`
+                (await core.Supplier.get(this._options.environment)) ?? environments.CodeCombatEnvironment.Default,
+                `classrooms/${handle}/members`
             ),
             method: "PUT",
             headers: {
                 Authorization: await this._getAuthorizationHeader(),
+                "X-Fern-Language": "JavaScript",
+                "X-Fern-SDK-Name": "@fern-api/codecombat",
+                "X-Fern-SDK-Version": "0.1.7",
             },
             contentType: "application/json",
-            body: await serializers.UpsertClassroomRequest.jsonOrThrow(request, { unrecognizedObjectKeys: "strip" }),
+            body: await serializers.ClassroomsUpsertMemberRequest.jsonOrThrow(request, {
+                unrecognizedObjectKeys: "strip",
+            }),
+            timeoutMs: requestOptions?.timeoutInSeconds != null ? requestOptions.timeoutInSeconds * 1000 : 60000,
         });
         if (_response.ok) {
             return await serializers.ClassroomResponse.parseOrThrow(_response.body, {
                 unrecognizedObjectKeys: "passthrough",
                 allowUnrecognizedUnionMembers: true,
                 allowUnrecognizedEnumValues: true,
+                breadcrumbsPrefix: ["response"],
             });
         }
 
@@ -161,29 +200,35 @@ export class Classrooms {
     /**
      * Remove a user from the classroom.
      */
-    public async deleteUserFromClassroom(
+    public async removeMember(
         handle: string,
-        request: CodeCombat.DeleteUserFromClassroomRequest
+        request: CodeCombat.ClassroomsRemoveMemberRequest,
+        requestOptions?: Classrooms.RequestOptions
     ): Promise<CodeCombat.ClassroomResponse> {
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodeCombatEnvironment.Production,
-                `/classrooms/${handle}/members`
+                (await core.Supplier.get(this._options.environment)) ?? environments.CodeCombatEnvironment.Default,
+                `classrooms/${handle}/members`
             ),
             method: "DELETE",
             headers: {
                 Authorization: await this._getAuthorizationHeader(),
+                "X-Fern-Language": "JavaScript",
+                "X-Fern-SDK-Name": "@fern-api/codecombat",
+                "X-Fern-SDK-Version": "0.1.7",
             },
             contentType: "application/json",
-            body: await serializers.DeleteUserFromClassroomRequest.jsonOrThrow(request, {
+            body: await serializers.ClassroomsRemoveMemberRequest.jsonOrThrow(request, {
                 unrecognizedObjectKeys: "strip",
             }),
+            timeoutMs: requestOptions?.timeoutInSeconds != null ? requestOptions.timeoutInSeconds * 1000 : 60000,
         });
         if (_response.ok) {
             return await serializers.ClassroomResponse.parseOrThrow(_response.body, {
                 unrecognizedObjectKeys: "passthrough",
                 allowUnrecognizedUnionMembers: true,
                 allowUnrecognizedEnumValues: true,
+                breadcrumbsPrefix: ["response"],
             });
         }
 
@@ -218,7 +263,8 @@ export class Classrooms {
     public async enrollUserInCourse(
         classroomHandle: string,
         courseHandle: string,
-        request: CodeCombat.EnrollUserInCourseRequest
+        request: CodeCombat.ClassroomsEnrollUserInCourseRequest,
+        requestOptions?: Classrooms.RequestOptions
     ): Promise<CodeCombat.ClassroomResponse> {
         const { retMemberLimit, ..._body } = request;
         const _queryParams = new URLSearchParams();
@@ -228,22 +274,29 @@ export class Classrooms {
 
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodeCombatEnvironment.Production,
-                `/classrooms/${classroomHandle}/courses/${courseHandle}/enrolled`
+                (await core.Supplier.get(this._options.environment)) ?? environments.CodeCombatEnvironment.Default,
+                `classrooms/${classroomHandle}/courses/${courseHandle}/enrolled`
             ),
             method: "PUT",
             headers: {
                 Authorization: await this._getAuthorizationHeader(),
+                "X-Fern-Language": "JavaScript",
+                "X-Fern-SDK-Name": "@fern-api/codecombat",
+                "X-Fern-SDK-Version": "0.1.7",
             },
             contentType: "application/json",
             queryParameters: _queryParams,
-            body: await serializers.EnrollUserInCourseRequest.jsonOrThrow(_body, { unrecognizedObjectKeys: "strip" }),
+            body: await serializers.ClassroomsEnrollUserInCourseRequest.jsonOrThrow(_body, {
+                unrecognizedObjectKeys: "strip",
+            }),
+            timeoutMs: requestOptions?.timeoutInSeconds != null ? requestOptions.timeoutInSeconds * 1000 : 60000,
         });
         if (_response.ok) {
             return await serializers.ClassroomResponse.parseOrThrow(_response.body, {
                 unrecognizedObjectKeys: "passthrough",
                 allowUnrecognizedUnionMembers: true,
                 allowUnrecognizedEnumValues: true,
+                breadcrumbsPrefix: ["response"],
             });
         }
 
@@ -273,10 +326,11 @@ export class Classrooms {
      * Removes an enrolled user from a course in a classroom.
      *
      */
-    public async removeUserFromClassroom(
+    public async removeEnrolledUser(
         classroomHandle: string,
         courseHandle: string,
-        request: CodeCombat.RemoveUserFromClassroomRequest
+        request: CodeCombat.ClassroomsRemoveEnrolledUserRequest,
+        requestOptions?: Classrooms.RequestOptions
     ): Promise<CodeCombat.ClassroomResponse> {
         const { retMemberLimit, ..._body } = request;
         const _queryParams = new URLSearchParams();
@@ -286,24 +340,29 @@ export class Classrooms {
 
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodeCombatEnvironment.Production,
-                `/classrooms/${classroomHandle}/courses/${courseHandle}/remove-enrolled`
+                (await core.Supplier.get(this._options.environment)) ?? environments.CodeCombatEnvironment.Default,
+                `classrooms/${classroomHandle}/courses/${courseHandle}/remove-enrolled`
             ),
             method: "PUT",
             headers: {
                 Authorization: await this._getAuthorizationHeader(),
+                "X-Fern-Language": "JavaScript",
+                "X-Fern-SDK-Name": "@fern-api/codecombat",
+                "X-Fern-SDK-Version": "0.1.7",
             },
             contentType: "application/json",
             queryParameters: _queryParams,
-            body: await serializers.RemoveUserFromClassroomRequest.jsonOrThrow(_body, {
+            body: await serializers.ClassroomsRemoveEnrolledUserRequest.jsonOrThrow(_body, {
                 unrecognizedObjectKeys: "strip",
             }),
+            timeoutMs: requestOptions?.timeoutInSeconds != null ? requestOptions.timeoutInSeconds * 1000 : 60000,
         });
         if (_response.ok) {
             return await serializers.ClassroomResponse.parseOrThrow(_response.body, {
                 unrecognizedObjectKeys: "passthrough",
                 allowUnrecognizedUnionMembers: true,
                 allowUnrecognizedEnumValues: true,
+                breadcrumbsPrefix: ["response"],
             });
         }
 
@@ -335,8 +394,9 @@ export class Classrooms {
      */
     public async getMembersStats(
         classroomHandle: string,
-        request: CodeCombat.GetMembersStatsRequest = {}
-    ): Promise<CodeCombat.MemberStat[]> {
+        request: CodeCombat.ClassroomsGetMembersStatsRequest = {},
+        requestOptions?: Classrooms.RequestOptions
+    ): Promise<CodeCombat.ClassroomsGetMembersStatsResponseItem[]> {
         const { project, memberLimit, memberSkip } = request;
         const _queryParams = new URLSearchParams();
         if (project != null) {
@@ -353,21 +413,26 @@ export class Classrooms {
 
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodeCombatEnvironment.Production,
-                `/classrooms/${classroomHandle}/stats`
+                (await core.Supplier.get(this._options.environment)) ?? environments.CodeCombatEnvironment.Default,
+                `classrooms/${classroomHandle}/stats`
             ),
             method: "GET",
             headers: {
                 Authorization: await this._getAuthorizationHeader(),
+                "X-Fern-Language": "JavaScript",
+                "X-Fern-SDK-Name": "@fern-api/codecombat",
+                "X-Fern-SDK-Version": "0.1.7",
             },
             contentType: "application/json",
             queryParameters: _queryParams,
+            timeoutMs: requestOptions?.timeoutInSeconds != null ? requestOptions.timeoutInSeconds * 1000 : 60000,
         });
         if (_response.ok) {
             return await serializers.classrooms.getMembersStats.Response.parseOrThrow(_response.body, {
                 unrecognizedObjectKeys: "passthrough",
                 allowUnrecognizedUnionMembers: true,
                 allowUnrecognizedEnumValues: true,
+                breadcrumbsPrefix: ["response"],
             });
         }
 
@@ -397,26 +462,32 @@ export class Classrooms {
      * Returns a list of all levels played by the user for the classroom.
      *
      */
-    public async getLevelSession(
+    public async getLevelsPlayed(
         classroomHandle: string,
-        memberHandle: string
+        memberHandle: string,
+        requestOptions?: Classrooms.RequestOptions
     ): Promise<CodeCombat.LevelSessionResponse[]> {
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodeCombatEnvironment.Production,
-                `/classrooms/${classroomHandle}/members/${memberHandle}/sessions`
+                (await core.Supplier.get(this._options.environment)) ?? environments.CodeCombatEnvironment.Default,
+                `classrooms/${classroomHandle}/members/${memberHandle}/sessions`
             ),
             method: "GET",
             headers: {
                 Authorization: await this._getAuthorizationHeader(),
+                "X-Fern-Language": "JavaScript",
+                "X-Fern-SDK-Name": "@fern-api/codecombat",
+                "X-Fern-SDK-Version": "0.1.7",
             },
             contentType: "application/json",
+            timeoutMs: requestOptions?.timeoutInSeconds != null ? requestOptions.timeoutInSeconds * 1000 : 60000,
         });
         if (_response.ok) {
-            return await serializers.classrooms.getLevelSession.Response.parseOrThrow(_response.body, {
+            return await serializers.classrooms.getLevelsPlayed.Response.parseOrThrow(_response.body, {
                 unrecognizedObjectKeys: "passthrough",
                 allowUnrecognizedUnionMembers: true,
                 allowUnrecognizedEnumValues: true,
+                breadcrumbsPrefix: ["response"],
             });
         }
 
@@ -442,12 +513,10 @@ export class Classrooms {
         }
     }
 
-    private async _getAuthorizationHeader() {
-        const credentials = await core.Supplier.get(this.options.credentials);
-        if (credentials != null) {
-            return core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(credentials));
-        }
-
-        return undefined;
+    protected async _getAuthorizationHeader() {
+        return core.BasicAuth.toAuthorizationHeader({
+            username: await core.Supplier.get(this._options.username),
+            password: await core.Supplier.get(this._options.password),
+        });
     }
 }

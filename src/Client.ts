@@ -4,6 +4,10 @@
 
 import * as environments from "./environments";
 import * as core from "./core";
+import * as CodeCombat from "./api";
+import * as serializers from "./serialization";
+import urlJoin from "url-join";
+import * as errors from "./errors";
 import { Auth } from "./api/resources/auth/client/Client";
 import { Clans } from "./api/resources/clans/client/Client";
 import { Classrooms } from "./api/resources/classrooms/client/Client";
@@ -12,41 +16,111 @@ import { Users } from "./api/resources/users/client/Client";
 
 export declare namespace CodeCombatClient {
     interface Options {
-        environment?: environments.CodeCombatEnvironment | string;
-        credentials: core.Supplier<core.BasicAuth>;
+        environment?: core.Supplier<environments.CodeCombatEnvironment | string>;
+        username: core.Supplier<string>;
+        password: core.Supplier<string>;
+    }
+
+    interface RequestOptions {
+        timeoutInSeconds?: number;
     }
 }
 
 export class CodeCombatClient {
-    constructor(private readonly options: CodeCombatClient.Options) {}
+    constructor(protected readonly _options: CodeCombatClient.Options) {}
 
-    private _auth: Auth | undefined;
+    /**
+     * Adds an OAuth2 identity to the user, so that they can be logged in with that identity. You need to send the OAuth code or the access token to this endpoint. 1. If no access token is provided, it will use your OAuth2 token URL to exchange the given code for an access token. 2. Then it will use the access token (given by you, or received from step 1) to look up the user on your service using the lookup URL, and expects a JSON object in response with an `id` property. 3. It will then save that user `id` to the user in our db as a new OAuthIdentity. In this example, we call your lookup URL (let's say, `https://oauth.provider/user?t=<%= accessToken %>`) with the access token (`1234`). The lookup URL returns `{ id: 'abcd' }` in this case, which we save to the user in our db.
+     *
+     */
+    public async postUsersHandleOAuthIdentities(
+        handle: string,
+        request: CodeCombat.PostUsersHandleOAuthIdentitiesRequest,
+        requestOptions?: CodeCombatClient.RequestOptions
+    ): Promise<CodeCombat.UserResponse> {
+        const _response = await core.fetcher({
+            url: urlJoin(
+                (await core.Supplier.get(this._options.environment)) ?? environments.CodeCombatEnvironment.Default,
+                `users/${handle}/o-auth-identities`
+            ),
+            method: "POST",
+            headers: {
+                Authorization: await this._getAuthorizationHeader(),
+                "X-Fern-Language": "JavaScript",
+                "X-Fern-SDK-Name": "@fern-api/codecombat",
+                "X-Fern-SDK-Version": "0.1.7",
+            },
+            contentType: "application/json",
+            body: await serializers.PostUsersHandleOAuthIdentitiesRequest.jsonOrThrow(request, {
+                unrecognizedObjectKeys: "strip",
+            }),
+            timeoutMs: requestOptions?.timeoutInSeconds != null ? requestOptions.timeoutInSeconds * 1000 : 60000,
+        });
+        if (_response.ok) {
+            return await serializers.UserResponse.parseOrThrow(_response.body, {
+                unrecognizedObjectKeys: "passthrough",
+                allowUnrecognizedUnionMembers: true,
+                allowUnrecognizedEnumValues: true,
+                breadcrumbsPrefix: ["response"],
+            });
+        }
+
+        if (_response.error.reason === "status-code") {
+            throw new errors.CodeCombatError({
+                statusCode: _response.error.statusCode,
+                body: _response.error.body,
+            });
+        }
+
+        switch (_response.error.reason) {
+            case "non-json":
+                throw new errors.CodeCombatError({
+                    statusCode: _response.error.statusCode,
+                    body: _response.error.rawBody,
+                });
+            case "timeout":
+                throw new errors.CodeCombatTimeoutError();
+            case "unknown":
+                throw new errors.CodeCombatError({
+                    message: _response.error.errorMessage,
+                });
+        }
+    }
+
+    protected _auth: Auth | undefined;
 
     public get auth(): Auth {
-        return (this._auth ??= new Auth(this.options));
+        return (this._auth ??= new Auth(this._options));
     }
 
-    private _clans: Clans | undefined;
+    protected _clans: Clans | undefined;
 
     public get clans(): Clans {
-        return (this._clans ??= new Clans(this.options));
+        return (this._clans ??= new Clans(this._options));
     }
 
-    private _classrooms: Classrooms | undefined;
+    protected _classrooms: Classrooms | undefined;
 
     public get classrooms(): Classrooms {
-        return (this._classrooms ??= new Classrooms(this.options));
+        return (this._classrooms ??= new Classrooms(this._options));
     }
 
-    private _stats: Stats | undefined;
+    protected _stats: Stats | undefined;
 
     public get stats(): Stats {
-        return (this._stats ??= new Stats(this.options));
+        return (this._stats ??= new Stats(this._options));
     }
 
-    private _users: Users | undefined;
+    protected _users: Users | undefined;
 
     public get users(): Users {
-        return (this._users ??= new Users(this.options));
+        return (this._users ??= new Users(this._options));
+    }
+
+    protected async _getAuthorizationHeader() {
+        return core.BasicAuth.toAuthorizationHeader({
+            username: await core.Supplier.get(this._options.username),
+            password: await core.Supplier.get(this._options.password),
+        });
     }
 }
