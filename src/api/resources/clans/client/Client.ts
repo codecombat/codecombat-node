@@ -42,7 +42,7 @@ export class Clans {
                 Authorization: await this._getAuthorizationHeader(),
                 "X-Fern-Language": "JavaScript",
                 "X-Fern-SDK-Name": "@fern-api/codecombat",
-                "X-Fern-SDK-Version": "0.1.7",
+                "X-Fern-SDK-Version": "0.1.8",
             },
             contentType: "application/json",
             body: await serializers.ClansUpsertMemberRequest.jsonOrThrow(request, { unrecognizedObjectKeys: "strip" }),
