@@ -4,27 +4,33 @@
 
 import * as environments from "../../../../environments";
 import * as core from "../../../../core";
-import { CodeCombat } from "@fern-api/codecombat";
-import URLSearchParams from "@ungap/url-search-params";
+import * as CodeCombat from "../../..";
+import { default as URLSearchParams } from "@ungap/url-search-params";
 import urlJoin from "url-join";
 import * as serializers from "../../../../serialization";
 import * as errors from "../../../../errors";
 
 export declare namespace Stats {
     interface Options {
-        environment?: environments.CodeCombatEnvironment | string;
-        credentials: core.Supplier<core.BasicAuth>;
+        environment?: core.Supplier<environments.CodeCombatEnvironment | string>;
+        username: core.Supplier<string>;
+        password: core.Supplier<string>;
+    }
+
+    interface RequestOptions {
+        timeoutInSeconds?: number;
     }
 }
 
 export class Stats {
-    constructor(private readonly options: Stats.Options) {}
+    constructor(protected readonly _options: Stats.Options) {}
 
     /**
      * Returns the playtime stats
      */
     public async getPlaytimeStats(
-        request: CodeCombat.GetPlaytimeStats = {}
+        request: CodeCombat.StatsGetPlaytimeStatsRequest = {},
+        requestOptions?: Stats.RequestOptions
     ): Promise<CodeCombat.PlaytimeStatsResponse> {
         const { startDate, endDate, country } = request;
         const _queryParams = new URLSearchParams();
@@ -41,19 +47,27 @@ export class Stats {
         }
 
         const _response = await core.fetcher({
-            url: urlJoin(this.options.environment ?? environments.CodeCombatEnvironment.Production, "/playtime-stats"),
+            url: urlJoin(
+                (await core.Supplier.get(this._options.environment)) ?? environments.CodeCombatEnvironment.Default,
+                "playtime-stats"
+            ),
             method: "GET",
             headers: {
                 Authorization: await this._getAuthorizationHeader(),
+                "X-Fern-Language": "JavaScript",
+                "X-Fern-SDK-Name": "@fern-api/codecombat",
+                "X-Fern-SDK-Version": "0.1.6",
             },
             contentType: "application/json",
             queryParameters: _queryParams,
+            timeoutMs: requestOptions?.timeoutInSeconds != null ? requestOptions.timeoutInSeconds * 1000 : 60000,
         });
         if (_response.ok) {
             return await serializers.PlaytimeStatsResponse.parseOrThrow(_response.body, {
                 unrecognizedObjectKeys: "passthrough",
                 allowUnrecognizedUnionMembers: true,
                 allowUnrecognizedEnumValues: true,
+                breadcrumbsPrefix: ["response"],
             });
         }
 
@@ -82,20 +96,28 @@ export class Stats {
     /**
      * Returns the license stats
      */
-    public async getLicenseStats(): Promise<CodeCombat.LicenseStatsResponse> {
+    public async getLicenseStats(requestOptions?: Stats.RequestOptions): Promise<CodeCombat.LicenseStatsResponse> {
         const _response = await core.fetcher({
-            url: urlJoin(this.options.environment ?? environments.CodeCombatEnvironment.Production, "/license-stats"),
+            url: urlJoin(
+                (await core.Supplier.get(this._options.environment)) ?? environments.CodeCombatEnvironment.Default,
+                "license-stats"
+            ),
             method: "GET",
             headers: {
                 Authorization: await this._getAuthorizationHeader(),
+                "X-Fern-Language": "JavaScript",
+                "X-Fern-SDK-Name": "@fern-api/codecombat",
+                "X-Fern-SDK-Version": "0.1.6",
             },
             contentType: "application/json",
+            timeoutMs: requestOptions?.timeoutInSeconds != null ? requestOptions.timeoutInSeconds * 1000 : 60000,
         });
         if (_response.ok) {
             return await serializers.LicenseStatsResponse.parseOrThrow(_response.body, {
                 unrecognizedObjectKeys: "passthrough",
                 allowUnrecognizedUnionMembers: true,
                 allowUnrecognizedEnumValues: true,
+                breadcrumbsPrefix: ["response"],
             });
         }
 
@@ -121,12 +143,10 @@ export class Stats {
         }
     }
 
-    private async _getAuthorizationHeader() {
-        const credentials = await core.Supplier.get(this.options.credentials);
-        if (credentials != null) {
-            return core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(credentials));
-        }
-
-        return undefined;
+    protected async _getAuthorizationHeader() {
+        return core.BasicAuth.toAuthorizationHeader({
+            username: await core.Supplier.get(this._options.username),
+            password: await core.Supplier.get(this._options.password),
+        });
     }
 }

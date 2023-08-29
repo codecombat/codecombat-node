@@ -1,1 +1,1 @@
-export { GetPlaytimeStats } from "./GetPlaytimeStats";
+export { StatsGetPlaytimeStatsRequest } from "./StatsGetPlaytimeStatsRequest";

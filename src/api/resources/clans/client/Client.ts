@@ -4,42 +4,56 @@
 
 import * as environments from "../../../../environments";
 import * as core from "../../../../core";
-import { CodeCombat } from "@fern-api/codecombat";
-import urlJoin from "url-join";
+import * as CodeCombat from "../../..";
 import * as serializers from "../../../../serialization";
+import urlJoin from "url-join";
 import * as errors from "../../../../errors";
 
 export declare namespace Clans {
     interface Options {
-        environment?: environments.CodeCombatEnvironment | string;
-        credentials: core.Supplier<core.BasicAuth>;
+        environment?: core.Supplier<environments.CodeCombatEnvironment | string>;
+        username: core.Supplier<string>;
+        password: core.Supplier<string>;
+    }
+
+    interface RequestOptions {
+        timeoutInSeconds?: number;
     }
 }
 
 export class Clans {
-    constructor(private readonly options: Clans.Options) {}
+    constructor(protected readonly _options: Clans.Options) {}
 
     /**
      * Upserts a user into the clan.
      */
-    public async upsertClan(handle: string, request: CodeCombat.UpsertClanRequest): Promise<CodeCombat.ClanResponse> {
+    public async upsertMember(
+        handle: string,
+        request: CodeCombat.ClansUpsertMemberRequest,
+        requestOptions?: Clans.RequestOptions
+    ): Promise<CodeCombat.ClanResponse> {
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodeCombatEnvironment.Production,
-                `/clan/${handle}/members`
+                (await core.Supplier.get(this._options.environment)) ?? environments.CodeCombatEnvironment.Default,
+                `clan/${handle}/members`
             ),
             method: "PUT",
             headers: {
                 Authorization: await this._getAuthorizationHeader(),
+                "X-Fern-Language": "JavaScript",
+                "X-Fern-SDK-Name": "@fern-api/codecombat",
+                "X-Fern-SDK-Version": "0.1.6",
             },
             contentType: "application/json",
-            body: await serializers.UpsertClanRequest.jsonOrThrow(request, { unrecognizedObjectKeys: "strip" }),
+            body: await serializers.ClansUpsertMemberRequest.jsonOrThrow(request, { unrecognizedObjectKeys: "strip" }),
+            timeoutMs: requestOptions?.timeoutInSeconds != null ? requestOptions.timeoutInSeconds * 1000 : 60000,
         });
         if (_response.ok) {
             return await serializers.ClanResponse.parseOrThrow(_response.body, {
                 unrecognizedObjectKeys: "passthrough",
                 allowUnrecognizedUnionMembers: true,
                 allowUnrecognizedEnumValues: true,
+                breadcrumbsPrefix: ["response"],
             });
         }
 
@@ -65,12 +79,10 @@ export class Clans {
         }
     }
 
-    private async _getAuthorizationHeader() {
-        const credentials = await core.Supplier.get(this.options.credentials);
-        if (credentials != null) {
-            return core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(credentials));
-        }
-
-        return undefined;
+    protected async _getAuthorizationHeader() {
+        return core.BasicAuth.toAuthorizationHeader({
+            username: await core.Supplier.get(this._options.username),
+            password: await core.Supplier.get(this._options.password),
+        });
     }
 }

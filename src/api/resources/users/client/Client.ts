@@ -4,44 +4,58 @@
 
 import * as environments from "../../../../environments";
 import * as core from "../../../../core";
-import { CodeCombat } from "@fern-api/codecombat";
-import urlJoin from "url-join";
+import * as CodeCombat from "../../..";
 import * as serializers from "../../../../serialization";
+import urlJoin from "url-join";
 import * as errors from "../../../../errors";
-import URLSearchParams from "@ungap/url-search-params";
+import { default as URLSearchParams } from "@ungap/url-search-params";
 
 export declare namespace Users {
     interface Options {
-        environment?: environments.CodeCombatEnvironment | string;
-        credentials: core.Supplier<core.BasicAuth>;
+        environment?: core.Supplier<environments.CodeCombatEnvironment | string>;
+        username: core.Supplier<string>;
+        password: core.Supplier<string>;
+    }
+
+    interface RequestOptions {
+        timeoutInSeconds?: number;
     }
 }
 
 export class Users {
-    constructor(private readonly options: Users.Options) {}
+    constructor(protected readonly _options: Users.Options) {}
 
     /**
      * Creates a `User`.
-     * #### Example
-     * ```javascript
-     * url = 'https://codecombat.com/api/users'
-     * json = { email: 'an@email.com', name: 'Some Username', role: 'student' }
-     * request.post({ url, json, auth })
-     * ```
      *
      */
-    public async create(request: CodeCombat.CreateUserRequest): Promise<void> {
+    public async create(
+        request: CodeCombat.UsersCreateRequest,
+        requestOptions?: Users.RequestOptions
+    ): Promise<CodeCombat.UserResponse> {
         const _response = await core.fetcher({
-            url: urlJoin(this.options.environment ?? environments.CodeCombatEnvironment.Production, "/users"),
+            url: urlJoin(
+                (await core.Supplier.get(this._options.environment)) ?? environments.CodeCombatEnvironment.Default,
+                "users"
+            ),
             method: "POST",
             headers: {
                 Authorization: await this._getAuthorizationHeader(),
+                "X-Fern-Language": "JavaScript",
+                "X-Fern-SDK-Name": "@fern-api/codecombat",
+                "X-Fern-SDK-Version": "0.1.6",
             },
             contentType: "application/json",
-            body: await serializers.CreateUserRequest.jsonOrThrow(request, { unrecognizedObjectKeys: "strip" }),
+            body: await serializers.UsersCreateRequest.jsonOrThrow(request, { unrecognizedObjectKeys: "strip" }),
+            timeoutMs: requestOptions?.timeoutInSeconds != null ? requestOptions.timeoutInSeconds * 1000 : 60000,
         });
         if (_response.ok) {
-            return;
+            return await serializers.UserResponse.parseOrThrow(_response.body, {
+                unrecognizedObjectKeys: "passthrough",
+                allowUnrecognizedUnionMembers: true,
+                allowUnrecognizedEnumValues: true,
+                breadcrumbsPrefix: ["response"],
+            });
         }
 
         if (_response.error.reason === "status-code") {
@@ -69,7 +83,11 @@ export class Users {
     /**
      * Returns a `User`.
      */
-    public async get(handle: string, request: CodeCombat.GetUserRequest = {}): Promise<CodeCombat.UserResponse> {
+    public async get(
+        handle: string,
+        request: CodeCombat.UsersGetRequest = {},
+        requestOptions?: Users.RequestOptions
+    ): Promise<CodeCombat.UserResponse> {
         const { includePlayTime } = request;
         const _queryParams = new URLSearchParams();
         if (includePlayTime != null) {
@@ -77,19 +95,27 @@ export class Users {
         }
 
         const _response = await core.fetcher({
-            url: urlJoin(this.options.environment ?? environments.CodeCombatEnvironment.Production, `/users/${handle}`),
+            url: urlJoin(
+                (await core.Supplier.get(this._options.environment)) ?? environments.CodeCombatEnvironment.Default,
+                `users/${handle}`
+            ),
             method: "GET",
             headers: {
                 Authorization: await this._getAuthorizationHeader(),
+                "X-Fern-Language": "JavaScript",
+                "X-Fern-SDK-Name": "@fern-api/codecombat",
+                "X-Fern-SDK-Version": "0.1.6",
             },
             contentType: "application/json",
             queryParameters: _queryParams,
+            timeoutMs: requestOptions?.timeoutInSeconds != null ? requestOptions.timeoutInSeconds * 1000 : 60000,
         });
         if (_response.ok) {
             return await serializers.UserResponse.parseOrThrow(_response.body, {
                 unrecognizedObjectKeys: "passthrough",
                 allowUnrecognizedUnionMembers: true,
                 allowUnrecognizedEnumValues: true,
+                breadcrumbsPrefix: ["response"],
             });
         }
 
@@ -118,21 +144,33 @@ export class Users {
     /**
      * Modify name of a `User`
      */
-    public async update(handle: string, request: CodeCombat.UpdateUserRequest): Promise<CodeCombat.UserResponse> {
+    public async update(
+        handle: string,
+        request: CodeCombat.UsersUpdateRequest,
+        requestOptions?: Users.RequestOptions
+    ): Promise<CodeCombat.UserResponse> {
         const _response = await core.fetcher({
-            url: urlJoin(this.options.environment ?? environments.CodeCombatEnvironment.Production, `/users/${handle}`),
+            url: urlJoin(
+                (await core.Supplier.get(this._options.environment)) ?? environments.CodeCombatEnvironment.Default,
+                `users/${handle}`
+            ),
             method: "PUT",
             headers: {
                 Authorization: await this._getAuthorizationHeader(),
+                "X-Fern-Language": "JavaScript",
+                "X-Fern-SDK-Name": "@fern-api/codecombat",
+                "X-Fern-SDK-Version": "0.1.6",
             },
             contentType: "application/json",
-            body: await serializers.UpdateUserRequest.jsonOrThrow(request, { unrecognizedObjectKeys: "strip" }),
+            body: await serializers.UsersUpdateRequest.jsonOrThrow(request, { unrecognizedObjectKeys: "strip" }),
+            timeoutMs: requestOptions?.timeoutInSeconds != null ? requestOptions.timeoutInSeconds * 1000 : 60000,
         });
         if (_response.ok) {
             return await serializers.UserResponse.parseOrThrow(_response.body, {
                 unrecognizedObjectKeys: "passthrough",
                 allowUnrecognizedUnionMembers: true,
                 allowUnrecognizedEnumValues: true,
+                breadcrumbsPrefix: ["response"],
             });
         }
 
@@ -163,7 +201,8 @@ export class Users {
      */
     public async getClassrooms(
         handle: string,
-        request: CodeCombat.GetClassroomsRequest = {}
+        request: CodeCombat.UsersGetClassroomsRequest = {},
+        requestOptions?: Users.RequestOptions
     ): Promise<CodeCombat.ClassroomResponseWithCode[]> {
         const { retMemberLimit } = request;
         const _queryParams = new URLSearchParams();
@@ -173,21 +212,26 @@ export class Users {
 
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodeCombatEnvironment.Production,
-                `/users/${handle}/classrooms`
+                (await core.Supplier.get(this._options.environment)) ?? environments.CodeCombatEnvironment.Default,
+                `users/${handle}/classrooms`
             ),
             method: "GET",
             headers: {
                 Authorization: await this._getAuthorizationHeader(),
+                "X-Fern-Language": "JavaScript",
+                "X-Fern-SDK-Name": "@fern-api/codecombat",
+                "X-Fern-SDK-Version": "0.1.6",
             },
             contentType: "application/json",
             queryParameters: _queryParams,
+            timeoutMs: requestOptions?.timeoutInSeconds != null ? requestOptions.timeoutInSeconds * 1000 : 60000,
         });
         if (_response.ok) {
             return await serializers.users.getClassrooms.Response.parseOrThrow(_response.body, {
                 unrecognizedObjectKeys: "passthrough",
                 allowUnrecognizedUnionMembers: true,
                 allowUnrecognizedEnumValues: true,
+                breadcrumbsPrefix: ["response"],
             });
         }
 
@@ -216,24 +260,33 @@ export class Users {
     /**
      * Set the user's hero.
      */
-    public async getHero(handle: string, request: CodeCombat.GetHeroRequest = {}): Promise<CodeCombat.UserResponse> {
+    public async setHero(
+        handle: string,
+        request: CodeCombat.UsersSetHeroRequest = {},
+        requestOptions?: Users.RequestOptions
+    ): Promise<CodeCombat.UserResponse> {
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodeCombatEnvironment.Production,
-                `/users/${handle}/hero-config`
+                (await core.Supplier.get(this._options.environment)) ?? environments.CodeCombatEnvironment.Default,
+                `users/${handle}/hero-config`
             ),
             method: "PUT",
             headers: {
                 Authorization: await this._getAuthorizationHeader(),
+                "X-Fern-Language": "JavaScript",
+                "X-Fern-SDK-Name": "@fern-api/codecombat",
+                "X-Fern-SDK-Version": "0.1.6",
             },
             contentType: "application/json",
-            body: await serializers.GetHeroRequest.jsonOrThrow(request, { unrecognizedObjectKeys: "strip" }),
+            body: await serializers.UsersSetHeroRequest.jsonOrThrow(request, { unrecognizedObjectKeys: "strip" }),
+            timeoutMs: requestOptions?.timeoutInSeconds != null ? requestOptions.timeoutInSeconds * 1000 : 60000,
         });
         if (_response.ok) {
             return await serializers.UserResponse.parseOrThrow(_response.body, {
                 unrecognizedObjectKeys: "passthrough",
                 allowUnrecognizedUnionMembers: true,
                 allowUnrecognizedEnumValues: true,
+                breadcrumbsPrefix: ["response"],
             });
         }
 
@@ -262,76 +315,33 @@ export class Users {
     /**
      * Set the user's aceConfig (the settings for the in-game Ace code editor), such as whether to enable autocomplete.
      */
-    public async setAceConfig(handle: string, request: CodeCombat.SetAceConfig = {}): Promise<CodeCombat.UserResponse> {
+    public async setAceConfig(
+        handle: string,
+        request: CodeCombat.UsersSetAceConfigRequest = {},
+        requestOptions?: Users.RequestOptions
+    ): Promise<CodeCombat.UserResponse> {
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodeCombatEnvironment.Production,
-                `/users/${handle}/ace-config`
+                (await core.Supplier.get(this._options.environment)) ?? environments.CodeCombatEnvironment.Default,
+                `users/${handle}/ace-config`
             ),
             method: "PUT",
             headers: {
                 Authorization: await this._getAuthorizationHeader(),
+                "X-Fern-Language": "JavaScript",
+                "X-Fern-SDK-Name": "@fern-api/codecombat",
+                "X-Fern-SDK-Version": "0.1.6",
             },
             contentType: "application/json",
-            body: await serializers.SetAceConfig.jsonOrThrow(request, { unrecognizedObjectKeys: "strip" }),
+            body: await serializers.UsersSetAceConfigRequest.jsonOrThrow(request, { unrecognizedObjectKeys: "strip" }),
+            timeoutMs: requestOptions?.timeoutInSeconds != null ? requestOptions.timeoutInSeconds * 1000 : 60000,
         });
         if (_response.ok) {
             return await serializers.UserResponse.parseOrThrow(_response.body, {
                 unrecognizedObjectKeys: "passthrough",
                 allowUnrecognizedUnionMembers: true,
                 allowUnrecognizedEnumValues: true,
-            });
-        }
-
-        if (_response.error.reason === "status-code") {
-            throw new errors.CodeCombatError({
-                statusCode: _response.error.statusCode,
-                body: _response.error.body,
-            });
-        }
-
-        switch (_response.error.reason) {
-            case "non-json":
-                throw new errors.CodeCombatError({
-                    statusCode: _response.error.statusCode,
-                    body: _response.error.rawBody,
-                });
-            case "timeout":
-                throw new errors.CodeCombatTimeoutError();
-            case "unknown":
-                throw new errors.CodeCombatError({
-                    message: _response.error.errorMessage,
-                });
-        }
-    }
-
-    /**
-     * Adds an OAuth2 identity to the user, so that they can be logged in with that identity. You need to send the OAuth code or the access token to this endpoint. 1. If no access token is provided, it will use your OAuth2 token URL to exchange the given code for an access token. 1. Then it will use the access token (given by you, or received from step 1) to look up the user on your service using the lookup URL, and expects a JSON object in response with an `id` property. 1. It will then save that user `id` to the user in our db as a new OAuthIdentity. #### Example ```javascript url = `https://codecombat.com/api/users/${userID}/o-auth-identities` OAUTH_PROVIDER_ID = 'xyz' json = { provider: OAUTH_PROVIDER_ID, accessToken: '1234' } request.post({ url, json, auth}, (err, res) => {
-     *   console.log(res.body.oAuthIdentities) // [ { provider: 'xyx', id: 'abcd' } ]
-     * }) ``` In this example, we call your lookup URL (let's say, `https://oauth.provider/user?t=<%= accessToken %>`) with the access token (`1234`). The lookup URL returns `{ id: 'abcd' }` in this case, which we save to the user in our db.
-     *
-     */
-    public async addOAuthIdentity(
-        handle: string,
-        request: CodeCombat.AddOAuthIdentityRequest
-    ): Promise<CodeCombat.UserResponse> {
-        const _response = await core.fetcher({
-            url: urlJoin(
-                this.options.environment ?? environments.CodeCombatEnvironment.Production,
-                `/users/${handle}/o-auth-identities`
-            ),
-            method: "POST",
-            headers: {
-                Authorization: await this._getAuthorizationHeader(),
-            },
-            contentType: "application/json",
-            body: await serializers.AddOAuthIdentityRequest.jsonOrThrow(request, { unrecognizedObjectKeys: "strip" }),
-        });
-        if (_response.ok) {
-            return await serializers.UserResponse.parseOrThrow(_response.body, {
-                unrecognizedObjectKeys: "passthrough",
-                allowUnrecognizedUnionMembers: true,
-                allowUnrecognizedEnumValues: true,
+                breadcrumbsPrefix: ["response"],
             });
         }
 
@@ -359,37 +369,37 @@ export class Users {
 
     /**
      * Grants a user premium access to the "Home" version up to a certain time.
-     * #### Example
-     * ```javascript
-     * url = `https://codecombat.com/api/users/${userID}/subscription`
-     * json = { ends: new Date('2017-01-01').toISOString() }
-     * request.put({ url, json, auth }, (err, res) => {
-     *   console.log(res.body.subscription) // { ends: '2017-01-01T00:00:00.000Z', active: true }
-     * })
-     * ```
      *
      */
-    public async updateSubscription(
+    public async grantPremiumSubscription(
         handle: string,
-        request: CodeCombat.UpdateSubscriptionRequest
+        request: CodeCombat.UsersGrantPremiumSubscriptionRequest,
+        requestOptions?: Users.RequestOptions
     ): Promise<CodeCombat.UserResponse> {
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodeCombatEnvironment.Production,
-                `/users/${handle}/subscription`
+                (await core.Supplier.get(this._options.environment)) ?? environments.CodeCombatEnvironment.Default,
+                `users/${handle}/subscription`
             ),
             method: "PUT",
             headers: {
                 Authorization: await this._getAuthorizationHeader(),
+                "X-Fern-Language": "JavaScript",
+                "X-Fern-SDK-Name": "@fern-api/codecombat",
+                "X-Fern-SDK-Version": "0.1.6",
             },
             contentType: "application/json",
-            body: await serializers.UpdateSubscriptionRequest.jsonOrThrow(request, { unrecognizedObjectKeys: "strip" }),
+            body: await serializers.UsersGrantPremiumSubscriptionRequest.jsonOrThrow(request, {
+                unrecognizedObjectKeys: "strip",
+            }),
+            timeoutMs: requestOptions?.timeoutInSeconds != null ? requestOptions.timeoutInSeconds * 1000 : 60000,
         });
         if (_response.ok) {
             return await serializers.UserResponse.parseOrThrow(_response.body, {
                 unrecognizedObjectKeys: "passthrough",
                 allowUnrecognizedUnionMembers: true,
                 allowUnrecognizedEnumValues: true,
+                breadcrumbsPrefix: ["response"],
             });
         }
 
@@ -416,34 +426,38 @@ export class Users {
     }
 
     /**
-     * If the user already has a premium access up to a certain time, this shortens/revokes his/her premium access. If the ends is less than or equal to the current time, it revokes the subscription and sets the end date to be the current time, else it just shortens the subscription. #### Example ```javascript url = `https://codecombat.com/api/users/${userID}/shorten-subscription` json = { ends: new Date().toISOString() } request.put({ url, json, auth }, (err, res) => {
-     *   console.log(res.body.subscription.active) // false
-     * }) ```
+     * If the user already has a premium access up to a certain time, this shortens/revokes his/her premium access. If the ends is less than or equal to the current time, it revokes the subscription and sets the end date to be the current time, else it just shortens the subscription.
      *
      */
     public async shortenSubscription(
         handle: string,
-        request: CodeCombat.ShortenSubscriptionRequest
+        request: CodeCombat.UsersShortenSubscriptionRequest,
+        requestOptions?: Users.RequestOptions
     ): Promise<CodeCombat.UserResponse> {
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodeCombatEnvironment.Production,
-                `/users/${handle}/shorten-subscription`
+                (await core.Supplier.get(this._options.environment)) ?? environments.CodeCombatEnvironment.Default,
+                `users/${handle}/shorten-subscription`
             ),
             method: "PUT",
             headers: {
                 Authorization: await this._getAuthorizationHeader(),
+                "X-Fern-Language": "JavaScript",
+                "X-Fern-SDK-Name": "@fern-api/codecombat",
+                "X-Fern-SDK-Version": "0.1.6",
             },
             contentType: "application/json",
-            body: await serializers.ShortenSubscriptionRequest.jsonOrThrow(request, {
+            body: await serializers.UsersShortenSubscriptionRequest.jsonOrThrow(request, {
                 unrecognizedObjectKeys: "strip",
             }),
+            timeoutMs: requestOptions?.timeoutInSeconds != null ? requestOptions.timeoutInSeconds * 1000 : 60000,
         });
         if (_response.ok) {
             return await serializers.UserResponse.parseOrThrow(_response.body, {
                 unrecognizedObjectKeys: "passthrough",
                 allowUnrecognizedUnionMembers: true,
                 allowUnrecognizedEnumValues: true,
+                breadcrumbsPrefix: ["response"],
             });
         }
 
@@ -472,37 +486,35 @@ export class Users {
     /**
      * Grants a user access to the "Classroom" version up to a certain time.
      * Sets their role to "student".
-     * #### Example
-     * ```javascript
-     * url = `https://codecombat.com/api/users/${userID}/license`
-     * json = { ends: new Date('2017-01-01').toISOString() }
-     * request.put({ url, json, auth }, (err, res) => {
-     *   console.log(res.body.license) // { ends: '2017-01-01T00:00:00.000Z', active: true }
-     * })
-     * ```
      *
      */
     public async grantLicense(
         handle: string,
-        request: CodeCombat.GrantLicenseRequest
+        request: CodeCombat.UsersGrantLicenseRequest,
+        requestOptions?: Users.RequestOptions
     ): Promise<CodeCombat.UserResponse> {
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodeCombatEnvironment.Production,
-                `/users/${handle}/license`
+                (await core.Supplier.get(this._options.environment)) ?? environments.CodeCombatEnvironment.Default,
+                `users/${handle}/license`
             ),
             method: "PUT",
             headers: {
                 Authorization: await this._getAuthorizationHeader(),
+                "X-Fern-Language": "JavaScript",
+                "X-Fern-SDK-Name": "@fern-api/codecombat",
+                "X-Fern-SDK-Version": "0.1.6",
             },
             contentType: "application/json",
-            body: await serializers.GrantLicenseRequest.jsonOrThrow(request, { unrecognizedObjectKeys: "strip" }),
+            body: await serializers.UsersGrantLicenseRequest.jsonOrThrow(request, { unrecognizedObjectKeys: "strip" }),
+            timeoutMs: requestOptions?.timeoutInSeconds != null ? requestOptions.timeoutInSeconds * 1000 : 60000,
         });
         if (_response.ok) {
             return await serializers.UserResponse.parseOrThrow(_response.body, {
                 unrecognizedObjectKeys: "passthrough",
                 allowUnrecognizedUnionMembers: true,
                 allowUnrecognizedEnumValues: true,
+                breadcrumbsPrefix: ["response"],
             });
         }
 
@@ -529,32 +541,38 @@ export class Users {
     }
 
     /**
-     * If the user already has access to the "Classroom" version up to a certain time, this shortens/revokes his/her access. If the ends is less than or equal to the current time, it revokes the enrollment and sets the end date to be the current time, else it just shortens the enrollment. #### Example ```javascript url = `https://codecombat.com/api/users/${userID}/shorten-license` json = { ends: new Date().toISOString() } request.put({ url, json, auth }, (err, res) => {
-     *   console.log(res.body.license.active) // false
-     * }) ```
+     * If the user already has access to the "Classroom" version up to a certain time, this shortens/revokes his/her access. If the ends is less than or equal to the current time, it revokes the enrollment and sets the end date to be the current time, else it just shortens the enrollment.
      *
      */
     public async shortenLicense(
         handle: string,
-        request: CodeCombat.ShortenLicenseRequest
+        request: CodeCombat.UsersShortenLicenseRequest,
+        requestOptions?: Users.RequestOptions
     ): Promise<CodeCombat.UserResponse> {
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodeCombatEnvironment.Production,
-                `/users/${handle}/shorten-license`
+                (await core.Supplier.get(this._options.environment)) ?? environments.CodeCombatEnvironment.Default,
+                `users/${handle}/shorten-license`
             ),
             method: "PUT",
             headers: {
                 Authorization: await this._getAuthorizationHeader(),
+                "X-Fern-Language": "JavaScript",
+                "X-Fern-SDK-Name": "@fern-api/codecombat",
+                "X-Fern-SDK-Version": "0.1.6",
             },
             contentType: "application/json",
-            body: await serializers.ShortenLicenseRequest.jsonOrThrow(request, { unrecognizedObjectKeys: "strip" }),
+            body: await serializers.UsersShortenLicenseRequest.jsonOrThrow(request, {
+                unrecognizedObjectKeys: "strip",
+            }),
+            timeoutMs: requestOptions?.timeoutInSeconds != null ? requestOptions.timeoutInSeconds * 1000 : 60000,
         });
         if (_response.ok) {
             return await serializers.UserResponse.parseOrThrow(_response.body, {
                 unrecognizedObjectKeys: "passthrough",
                 allowUnrecognizedUnionMembers: true,
                 allowUnrecognizedEnumValues: true,
+                breadcrumbsPrefix: ["response"],
             });
         }
 
@@ -583,17 +601,21 @@ export class Users {
     /**
      * Redirects to `/users/{handle}` given a unique, identifying property
      */
-    public async findUser(property: string, value: string): Promise<void> {
+    public async lookup(property: string, value: string, requestOptions?: Users.RequestOptions): Promise<void> {
         const _response = await core.fetcher({
             url: urlJoin(
-                this.options.environment ?? environments.CodeCombatEnvironment.Production,
-                `/user-lookup/${property}/${value}`
+                (await core.Supplier.get(this._options.environment)) ?? environments.CodeCombatEnvironment.Default,
+                `user-lookup/${property}/${value}`
             ),
             method: "GET",
             headers: {
                 Authorization: await this._getAuthorizationHeader(),
+                "X-Fern-Language": "JavaScript",
+                "X-Fern-SDK-Name": "@fern-api/codecombat",
+                "X-Fern-SDK-Version": "0.1.6",
             },
             contentType: "application/json",
+            timeoutMs: requestOptions?.timeoutInSeconds != null ? requestOptions.timeoutInSeconds * 1000 : 60000,
         });
         if (_response.ok) {
             return;
@@ -621,12 +643,10 @@ export class Users {
         }
     }
 
-    private async _getAuthorizationHeader() {
-        const credentials = await core.Supplier.get(this.options.credentials);
-        if (credentials != null) {
-            return core.BasicAuth.toAuthorizationHeader(await core.Supplier.get(credentials));
-        }
-
-        return undefined;
+    protected async _getAuthorizationHeader() {
+        return core.BasicAuth.toAuthorizationHeader({
+            username: await core.Supplier.get(this._options.username),
+            password: await core.Supplier.get(this._options.password),
+        });
     }
 }
